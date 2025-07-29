@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import LandingPage from "./pages/LandingPage.jsx";
 import Home from './pages/Home';
 import Navbar from "./components/Navbar.jsx";
 import './index.css'
@@ -7,9 +8,8 @@ import './index.css'
 const App = () => {
     return (
         <div>
-            <Navbar />
            <Routes>
-               <Route path="/" element={<Home />} />
+               <Route path="/" element={<LandingPage />} />
            </Routes>
         </div>
     );
