@@ -1,5 +1,6 @@
 import React from 'react';
 import video from '../assets/books.mp4'
+import {Link} from 'react-router-dom'
 
 const LandingPage = () => {
     return (
@@ -22,6 +23,12 @@ const LandingPage = () => {
                 <p className="mt-4 text-lg md:text-xl text-gray-200">
                     Discover your next favorite read.
                 </p>
+                <Link
+                    to="/login"
+                    className="mt-8 inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
+                >
+                    Get Started
+                </Link>
             </div>
         </div>
     );
