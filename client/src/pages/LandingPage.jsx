@@ -15,21 +15,13 @@ const LandingPage = () => {
                 Your browser does not support the video tag.
             </video>
 
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white bg-black/50 px-4">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
-                    Welcome to Bookish 📚
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen bg-black/50 px-4 text-white text-center">
+                <h1 className="text-5xl md:text-6xl font-display font-bold">
+                    Welcome to <span className="text-indigo-400">Bookish</span>
                 </h1>
-                <p className="mb-6 text-lg text-center max-w-xl">
-                    Discover, track, and share your favorite reads with a vibrant community of book lovers.
+                <p className="mt-4 text-lg md:text-xl text-gray-200">
+                    Discover your next favorite read.
                 </p>
-                <div className="flex gap-4">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl">
-                        Sign Up
-                    </button>
-                    <button className="bg-white hover:bg-gray-100 text-blue-600 font-semibold py-2 px-6 rounded-xl">
-                        Log In
-                    </button>
-                </div>
             </div>
         </div>
     );
