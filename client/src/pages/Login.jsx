@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
@@ -23,7 +25,7 @@ const Login = () => {
 
     const navigateToSignup = () => {
         // Handle navigation to signup page
-        console.log('Navigate to signup page');
+        navigate('/SignUp');
     };
 
     return (
