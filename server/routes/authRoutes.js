@@ -9,7 +9,7 @@ const router = express.Router()
 // Sign Up route
 router.post('/SignUp', async (req, res) => {
     try {
-        const {name, email, password} = req.body
+        const {email, password} = req.body
 
         // Check if email exists
         const existingUser = await prisma.user.findUnique({where: {email}})
@@ -26,7 +26,6 @@ router.post('/SignUp', async (req, res) => {
             data: {
                 email,
                 password: hashedPassword,
-                name
             }
         })
 
@@ -43,7 +42,6 @@ router.post('/SignUp', async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                name: user.name
             }
         })
 

@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express'
+
 const app = express();
 const port = process.env.PORT || 3000;
-import prisma from './primaClient.js'
+import prisma from './prismaClient.js'
 import authRoutes from './routes/authRoutes.js';
 
 app.use(express.json())
