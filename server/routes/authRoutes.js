@@ -77,7 +77,7 @@ router.post('/Login', async (req, res) => {
         const token = jwt.sign(
             {id: user.id, email: user.email},
             process.env.JWT_SECRET,
-            {expiresIn: '24h'}
+            {expiresIn: '20m'}
         )
 
         res.status(200).json({
@@ -90,6 +90,32 @@ router.post('/Login', async (req, res) => {
         })
 
     } catch (error) {
+        console.error('Registration error:', error)
+        res.status(500).json({error: 'Internal server error'})
+    }
+})
+
+// Protected route using authMiddleware
+router.get('/profile', authMiddleware, async (req, res) => {
+    try{
+        const user = await prisma.user.findUniqueOrThrow({
+            where: {email: req.id},
+            select: {
+                id: true,
+                email: true,
+            }
+        })
+
+        if (!user) {
+            return res.status(404).json({error: 'User does not exist'})
+        }
+
+        res.status(200).json({
+            message: 'Profile retrieved successfully',
+            user
+        })
+
+    }catch(error){
         console.error('Registration error:', error)
         res.status(500).json({error: 'Internal server error'})
     }
