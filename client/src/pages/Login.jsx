@@ -10,6 +10,11 @@ const Login = () => {
         password: ''
     });
 
+    const navigateToSignup = () => {
+        navigate('/signup');
+    };
+
+
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setFormData(prev => ({
@@ -20,13 +25,8 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle login logic here
+        // Handle Login logic here
         console.log('Login attempt:', formData);
-    };
-
-    const navigateToSignup = () => {
-        // Handle navigation to signup page
-        navigate('/SignUp');
     };
 
     return (

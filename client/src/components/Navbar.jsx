@@ -38,7 +38,7 @@ const Navbar = () => {
             </div>
             <div className="ml-6">
                 <NavLink
-                    to="/login"
+                    to="/Login"
                     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition"
                 >
                     Login

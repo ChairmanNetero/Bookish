@@ -1,81 +1,92 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LibraryImg from '../assets/Library.jpg';
 
-const Signup = () => {
+const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         confirmPassword: ''
     });
 
+    const navigate = useNavigate();
+
     const handleInputChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
     };
 
+    const navigateToLogin = () => {
+        navigate('/Login');
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Clear previous messages
-        setError('');
-        setSuccess('');
 
+        // Clear previous error
+        setError('');
+
+        // Validation
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match!');
             return;
         }
 
-        // Basic password validation (e.g., minimum length)
         if (formData.password.length < 6) {
-            setError('Password must be at least 6 characters long.');
+            setError('Password must be at least 6 characters');
             return;
         }
 
-        setLoading(true);
-
         try {
-            // The endpoint '/api/signup' is where your backend server will be listening.
-            const response = await axios.post('http://localhost:3000/api/SignUp', {
+            const response = await axios.post('http://localhost:3000/api/signup', {
                 email: formData.email,
                 password: formData.password,
             });
 
-            setSuccess('Account created successfully! You can now sign in.');
-            console.log('Signup successful:', response.data);
-            // Optionally, you can redirect the user or clear the form
-            setFormData({email: '', password: '', confirmPassword: ''});
+            console.log('SignUp successful:', response.data);
+
+            // Clear form and navigate
+            setFormData({ email: '', password: '', confirmPassword: '' });
+            navigateToLogin()
 
         } catch (err) {
-            // The backend should send back a specific error message.
-            // If it doesn't, we'll show a generic one.
             setError(err.response?.data?.message || 'An error occurred during signup. Please try again.');
-            console.error('Signup error:', err.response || err);
+            console.error('SignUp error:', err.response || err);
         }
     };
 
-    const navigateToLogin = () => {
-        // Handle navigation to login page
-        console.log('Navigate to login page');
-    };
+    const PasswordToggleIcon = ({ show }) => (
+        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {show ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
+            ) : (
+                <>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </>
+            )}
+        </svg>
+    );
 
     return (
         <div className="min-h-screen flex">
-            {/* Left Side - Signup Form */}
+            {/* Left Side - SignUp Form */}
             <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-20 xl:px-24">
                 <div className="w-full max-w-sm lg:max-w-md">
                     {/* Logo and Title */}
                     <div className="text-center mb-8">
                         <div className="flex items-center justify-center mb-4">
-                            <svg className="h-10 w-10 text-indigo-600" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24">
+                            <svg className="h-10 w-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
@@ -84,8 +95,15 @@ const Signup = () => {
                         <p className="text-gray-600">Join your reading community today</p>
                     </div>
 
-                    {/* Signup Form */}
-                    <div className="space-y-6">
+                    {/* Error Messages */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            {error}
+                        </div>
+                    )}
+
+                    {/* SignUp Form */}
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                                 Email address
@@ -124,21 +142,7 @@ const Signup = () => {
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                 >
-                                    {showPassword ? (
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
-                                        </svg>
-                                    ) : (
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                    )}
+                                    <PasswordToggleIcon show={showPassword} />
                                 </button>
                             </div>
                         </div>
@@ -164,21 +168,7 @@ const Signup = () => {
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                 >
-                                    {showConfirmPassword ? (
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
-                                        </svg>
-                                    ) : (
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                    )}
+                                    <PasswordToggleIcon show={showConfirmPassword} />
                                 </button>
                             </div>
                         </div>
@@ -193,25 +183,23 @@ const Signup = () => {
                             />
                             <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-700">
                                 I agree to the{' '}
-                                <a href="#"
-                                   className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
+                                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
                                     Terms of Service
                                 </a>
                                 {' '}and{' '}
-                                <a href="#"
-                                   className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
+                                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
                                     Privacy Policy
                                 </a>
                             </label>
                         </div>
 
                         <button
-                            onClick={handleSubmit}
+                            type="submit"
                             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                         >
                             Create your Bookish account
                         </button>
-                    </div>
+                    </form>
 
                     {/* Sign in link */}
                     <div className="mt-6 text-center">
@@ -240,4 +228,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default SignUp;

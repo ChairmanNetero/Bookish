@@ -24,7 +24,7 @@ const LandingPage = () => {
                     Discover your next favorite read.
                 </p>
                 <Link
-                    to="/login"
+                    to="/Login"
                     className="mt-8 inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300"
                 >
                     Get Started
