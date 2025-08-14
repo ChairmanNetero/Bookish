@@ -1,5 +1,4 @@
 import express from 'express'
-import prisma from './prismaClient.js'
 import cors from 'cors'
 import authRoutes from './routes/authRoutes.js';
 
