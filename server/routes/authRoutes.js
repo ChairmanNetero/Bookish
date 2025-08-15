@@ -5,10 +5,18 @@ import prisma from '../prismaClient.js'
 
 const router = express.Router()
 
+// Using regex to validate email format
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // Sign Up route
 router.post('/signup', async (req, res) => {
     try {
         const {email, password} = req.body
+
+        // Validate email format
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
 
         // Check password length
         if (password.length <= 6) {
@@ -56,7 +64,7 @@ router.post('/signup', async (req, res) => {
 })
 
 // Login route
-router.post('/Login', async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body
 
@@ -65,10 +73,15 @@ router.post('/Login', async (req, res) => {
             return res.status(400).json({error: 'Email and password is required'})
         }
 
+        // Validate email format
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
         // Find user by email
         const user = await prisma.user.findUnique({where: {email}})
         if (!user) {
-            return res.status(400).json({error: 'User does not exist'})
+            return res.status(400).json({error: 'Invalid email or password'})
         }
 
         // Verify password

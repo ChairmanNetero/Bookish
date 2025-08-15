@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import LibraryImg from "../assets/Library.jpg";
+import axios from "axios";
 
 const Login = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -23,10 +25,47 @@ const Login = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle Login logic here
-        console.log('Login attempt:', formData);
+
+        // Clear previous error
+        setError('');
+
+        // Make sure input is not empty
+        if (!formData.email || !formData.password) {
+            return setError('Email and password are required.');
+        }
+
+        // Make an HTTP Post request to backend API using Axios
+        try {
+            const response = await axios.post('http://localhost:3000/api/login', {
+                email: formData.email,
+                password: formData.password
+            });
+
+            console.log('Full response:', response.data); // Debug: see the full response
+
+
+            // Extract token sent by the backend from response
+            const token = response.data.token;
+
+            // Save the token to the local storage
+            localStorage.setItem('token', token);
+
+            // Set format for the authorization header for all future Axios requests
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            console.log('Successfully logged in', response.data);
+            console.log('Token extracted successfully:', token);
+
+            // Clear form and navigate to home page
+            setFormData({email: '', password: ''});
+            navigate('/home');
+
+        } catch (err) {
+            setError(err.response?.data?.message || 'An error occurred during login. Please try again.');
+            console.error('Login error:', err.response || err);
+        }
     };
 
     return (
