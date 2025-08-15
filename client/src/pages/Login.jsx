@@ -63,7 +63,7 @@ const Login = () => {
             navigate('/home');
 
         } catch (err) {
-            setError(err.response?.data?.message || 'An error occurred during login. Please try again.');
+            setError(err.response?.data?.error || 'An error occurred during login. Please try again.');
             console.error('Login error:', err.response || err);
         }
     };
@@ -85,6 +85,18 @@ const Login = () => {
                         </div>
                         <p className="text-gray-600">Welcome back to your reading journey</p>
                     </div>
+
+                    {/* Error Message Display */}
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <svg className="h-5 w-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p className="text-sm text-red-700">{error}</p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Login Form */}
                     <div className="space-y-6">
