@@ -57,7 +57,7 @@ const SignUp = () => {
             navigateToLogin()
 
         } catch (err) {
-            setError(err.response?.data?.message || 'An error occurred during signup. Please try again.');
+            setError(err.response?.data?.error || 'An error occurred during signup. Please try again.');
             console.error('SignUp error:', err.response || err);
         }
     };
@@ -209,7 +209,7 @@ const SignUp = () => {
                                 onClick={navigateToLogin}
                                 className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
                             >
-                                Sign in here
+                                Login here
                             </button>
                         </p>
                     </div>
