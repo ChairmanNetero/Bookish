@@ -1,9 +1,10 @@
 import React from 'react';
+import Navbar from "../components/Navbar.jsx";
 
 const Home = () => {
     return (
         <div>
-            <h1>Welcome to Bookish</h1>
+          <Navbar />
         </div>
     );
 };
