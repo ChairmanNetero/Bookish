@@ -19,99 +19,77 @@ const BookOfTheWeek = () => {
         'OL27448W', // The Lord of the Rings
         'OL3140822W', // To Kill a Mockingbird
         'OL1168083W', // 1984
-        'OL468431W',   // The Great Gatsby
+        'OL468431W', // The Great Gatsby
         'OL66554W', // Pride and Prejudice
         'OL893415W', // Dune
-        'OL27482W',   // The Hobbit
+        'OL27482W', // The Hobbit
         'OL857600W', // The Feast of the Goat
-        'OL82931W',// Light in August
-        'OL36287W'  // The Count of Monte Cristo
+        'OL82931W', // Light in August
+        'OL36287W' // The Count of Monte Cristo
     ];
 
     // Fetching the data using axios
-    useEffect(() => {
-        const fetchBookdata = async () => {
-            try{
-                const weekNumber = getWeekNumber();
+    const fetchBook = async () => {
+        try {
+            const weekNumber = getWeekNumber();
 
-                // Determine which book to feature this week
-                const bookId = bookIds[weekNumber % bookIds.length];
+            // Determine which book to feature this week
+            const bookId = bookIds[weekNumber % bookIds.length];
 
-                // Fetch book details from Open Library
-                const bookResponse = await axios.get(`https://openlibrary.org/works/${bookId}.json`)
-                const bookData = bookResponse.data;
-                console.log(bookData);
+            // Fetch book details from Open Library
+            const bookResponse = await axios.get(`https://openlibrary.org/works/${bookId}.json`);
+            const bookData = bookResponse.data;
+            console.log(bookData);
 
-                // Fetch author data
-                if(bookData.authors && bookData.authors.length > 0){
-                    const authorKey = bookData.authors[0].author.key;
-                    const authorResponse = await axios.get(`https://openlibrary.org${authorKey}.json`);
-                    setAuthor(authorResponse.data.name);
-                }
-
-                // set the book data in a state
-                setBook(bookData);
-            } catch(err){
-                console.error('Error fetching book data',err);
+            // Fetch author data
+            let authorName = "Unknown Author";
+            if (bookData.authors && bookData.authors.length > 0) {
+                const authorKey = bookData.authors[0].author.key;
+                const authorResponse = await axios.get(`https://openlibrary.org${authorKey}.json`);
+                authorName = authorResponse.data.name;
+                console.log(authorName);
+                setAuthor(authorName);
             }
+
+            // Fetch the description (without external links)
+            const fullDescription = bookData.description;
+
+            const separator = '--';
+            const endIndex = fullDescription.indexOf(separator);
+            const description = fullDescription.slice(0, endIndex);
+
+            // Get the cover image URL
+            const coverImageURL = (bookData) => {
+                if (bookData.covers && bookData.covers.length > 0) {
+                    const coverId = bookData.covers[0];
+                    return `https://covers.openlibrary.org/b/olid/${coverId}-L.jpg`;
+                }
+            }
+
+            // Construct the book object
+            const bookInfo = {
+                title: bookData.title,
+                author: authorName,
+                description: description,
+                coverImage: coverImageURL
+
+            }
+            console.log(bookInfo);
+
+        } catch (err) {
+            console.error('Error fetching book data', err);
         }
-        fetchBookdata();
+    };
+
+
+    useEffect(() => {
+        fetchBook();
     }, []);
 
     return (
-        <section className="bg-gray-100 dark:bg-gray-800 py-12 md:py-20 font-sans">
-            <div className="container mx-auto px-4">
-                <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-white mb-2">
-                    Book of the Week
-                </h2>
-                <p className="text-center text-gray-600 dark:text-gray-300 mb-10">
-                    Our special feature for this week. Dive in!
-                </p>
-                <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden md:flex">
-                    {/* Book Cover */}
-                    <div className="md:w-1/3">
-                        {book.covers && book.covers.length > 0 ? (
-                            <img
-                                className="w-full h-full object-cover"
-                                src={`https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`}
-                                alt={`Cover of ${book.title}`}
-                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/800x1200/e2e8f0/334155?text=No+Cover'; }}
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <span className="text-gray-500">No Cover Available</span>
-                            </div>
-                        )}
-                    </div>
+        <div>
 
-                    {/* Book Details */}
-                    <div className="p-8 md:p-10 md:w-2/3 flex flex-col justify-between">
-                        <div>
-                            <p className="text-sm text-blue-500 dark:text-blue-400 font-semibold uppercase tracking-wider">
-                                Featured Read
-                            </p>
-                            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-2 mb-3">
-                                {book.title}
-                            </h3>
-                            <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                                by {author || 'Unknown Author'}
-                            </p>
-                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-6">
-                                {description.split('\n')[0]} {/* Show first paragraph or snippet */}
-                            </p>
-                        </div>
-                        <a
-                            href={`https://openlibrary.org${book.key}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105 self-start"
-                        >
-                            Learn More on Open Library
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     );
 };
 
