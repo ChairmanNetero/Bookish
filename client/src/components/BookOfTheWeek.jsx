@@ -68,7 +68,7 @@ const BookOfTheWeek = () => {
             // Get cover image - need to get the cover ID from the book data
             let coverImage = null;
             if (bookData.covers && bookData.covers.length > 0) {
-                coverImage = `https://covers.openlibrary.org/b/id/${bookData.covers[7]}-L.jpg`;
+                coverImage = `https://covers.openlibrary.org/b/id/${bookData.covers[1]}-L.jpg`;
             }
 
             // Construct the book object
