@@ -6,7 +6,6 @@ import TrendingNow from "../components/TrendingNow.jsx";
 const Home = () => {
     return (
         <div className="min-h-screen bg-white">
-            <Navbar/>
             <div className="container mx-auto px-4 py-8">
                 {/* Fixed layout with proper alignment and equal heights */}
                 <div className="flex flex-col lg:flex-row gap-8 items-stretch">

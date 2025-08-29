@@ -4,9 +4,10 @@ import axios from 'axios';
 
 const BookDetails = () => {
     const {bookID} = useParams();
-    const [book, setBook] = useState(null)
+    const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showFullDescription, setShowFullDescription] = useState(false);
 
     useEffect(() => {
         const fetchBookDetails = async () => {
@@ -17,7 +18,7 @@ const BookDetails = () => {
                 const bookData = response.data;
 
                 // Extract needed information for BookDetails Page
-                const title = bookData.title;
+                const title = bookData.title || "Unknown Title";
                 const publicationYear = bookData.first_publish_date;
                 console.log(bookData);
                 console.log(publicationYear);
@@ -28,18 +29,23 @@ const BookDetails = () => {
                     try {
                         const authorKey = bookData.authors[0].author.key;
                         const authorResponse = await axios.get(`https://openlibrary.org${authorKey}.json`);
-                        authorName = authorResponse.data.name;
+                        authorName = authorResponse.data.name || "Unknown Author";
                     } catch (authorError) {
                         console.warn('Could not fetch author data:', authorError);
                     }
                 }
 
-                // Fetch description
-                const fullDescription = bookData.description;
+                // Fetch description - add null checks
+                let description = "No description available";
+                if (bookData.description) {
+                    const fullDescription = typeof bookData.description === 'string'
+                        ? bookData.description
+                        : bookData.description.value || bookData.description;
 
-                const separator = '--';
-                const endIndex = fullDescription.indexOf(separator);
-                const description = fullDescription.slice(0, endIndex);
+                    const separator = '--';
+                    const endIndex = fullDescription.indexOf(separator);
+                    description = endIndex !== -1 ? fullDescription.slice(0, endIndex) : fullDescription;
+                }
                 console.log(description);
 
                 // Fetch cover image
@@ -47,13 +53,12 @@ const BookDetails = () => {
                 if (bookData.covers && bookData.covers.length > 0) {
                     coverImage = `https://covers.openlibrary.org/b/id/${bookData.covers[0]}-L.jpg`;
                 } else {
-                    coverImage = `'https://placehold.co/200x300/png?text=No+Cover`;
+                    coverImage = `https://placehold.co/200x300/png?text=No+Cover`;
                 }
 
-                // Fetch the book genre
-                const genres = bookData.subjects.slice(0, 6)
+                // Fetch the book genre - add null check
+                const genres = bookData.subjects ? bookData.subjects.slice(0, 6) : [];
                 console.log(genres);
-
 
                 // Set the final book state
                 setBook({
@@ -63,9 +68,7 @@ const BookDetails = () => {
                     publicationYear: publicationYear,
                     coverImage: coverImage,
                     genres: genres,
-
                 });
-
             } catch (err) {
                 setError('Failed to fetch book details');
                 console.error('Error fetching book:', err);
@@ -75,9 +78,50 @@ const BookDetails = () => {
         };
 
         fetchBookDetails();
-    }, [bookID])
+    }, [bookID]);
 
+    // Show loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading book details...</p>
+                </div>
+            </div>
+        );
+    }
 
+    // Show error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-600 text-lg">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Show message if no book data
+    if (!book) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <p className="text-gray-600">No book data found.</p>
+            </div>
+        );
+    }
+
+    // Calculate truncated description
+    const truncatedDescription = book.description && book.description.length > 300
+        ? book.description.substring(0, 300) + "..."
+        : book.description;
 
     return (
         <div>
@@ -99,7 +143,6 @@ const BookDetails = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                             </div>
-
                             {/* Book Information */}
                             <div className="lg:w-2/3 p-8">
                                 <div className="mb-6">
@@ -109,14 +152,7 @@ const BookDetails = () => {
                                     <p className="text-xl text-gray-600 mb-4">
                                         by <span className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">{book.authorName}</span>
                                     </p>
-
-                                    {/* Rating */}
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <StarRating rating={3.64} />
-                                        <span className="text-gray-500">75 ratings · 9 reviews</span>
-                                    </div>
                                 </div>
-
                                 {/* Description */}
                                 <div className="mb-8">
                                     <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
@@ -131,7 +167,6 @@ const BookDetails = () => {
                                         </button>
                                     )}
                                 </div>
-
                                 {/* Publication Year */}
                                 {book.publicationYear && (
                                     <div className="mb-6">
@@ -139,7 +174,6 @@ const BookDetails = () => {
                                         <p className="text-lg text-gray-800 font-medium">{book.publicationYear}</p>
                                     </div>
                                 )}
-
                                 {/* Genres */}
                                 {book.genres && book.genres.length > 0 && (
                                     <div className="mb-8">
@@ -150,13 +184,12 @@ const BookDetails = () => {
                                                     key={index}
                                                     className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors duration-200 cursor-pointer"
                                                 >
-                                                {genre}
-                                            </span>
+                                                    {genre}
+                                                </span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-
                                 {/* Action Buttons */}
                                 <div className="flex flex-wrap gap-3">
                                     <button className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg">
@@ -172,36 +205,8 @@ const BookDetails = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Additional Information Section */}
-                    <div className="mt-8 bg-white rounded-lg shadow-lg p-8">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Book Details</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <dt className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Title</dt>
-                                <dd className="text-lg text-gray-900">{book.title}</dd>
-                            </div>
-                            <div>
-                                <dt className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Author</dt>
-                                <dd className="text-lg text-gray-900">{book.authorName}</dd>
-                            </div>
-                            {book.publicationYear && (
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">First Published</dt>
-                                    <dd className="text-lg text-gray-900">{book.publicationYear}</dd>
-                                </div>
-                            )}
-                            {book.genres && book.genres.length > 0 && (
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Primary Genre</dt>
-                                    <dd className="text-lg text-gray-900">{book.genres[0]}</dd>
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
-            
         </div>
     );
 };
