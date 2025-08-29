@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Home from "./pages/Home.jsx";
+import BookDetails from "./pages/BookDetails.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import './index.css'
 
@@ -18,6 +19,7 @@ const App = () => {
                     <Home/>
                 </ProtectedRoute>}
                 />
+                <Route path="/books/:bookID" element={<BookDetails/>}/>
             </Routes>
         </div>
     );
