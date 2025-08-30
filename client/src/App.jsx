@@ -6,6 +6,7 @@ import SignUp from "./pages/SignUp.jsx";
 import Home from "./pages/Home.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Layout from "./components/Layout.jsx";
 import './index.css'
 
 const App = () => {
@@ -16,10 +17,16 @@ const App = () => {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/signup" element={<SignUp/>}/>
                 <Route path="/home" element={<ProtectedRoute>
-                    <Home/>
+                    <Layout>
+                        <Home/>
+                    </Layout>
                 </ProtectedRoute>}
                 />
-                <Route path="/books/:bookID" element={<BookDetails/>}/>
+                <Route path="/books/:bookID" element={
+                    <Layout>
+                        <BookDetails/>
+                    </Layout>
+                }/>
             </Routes>
         </div>
     );
