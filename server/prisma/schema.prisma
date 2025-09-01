@@ -28,7 +28,7 @@ model Review {
   bookId    String // Store the book ID from the third-party API
   userId    Int
   rating    Int // Rating from 1-5
-  content   String   @db.Text // Use Text for longer review content
+  content   String?  @db.Text // Use Text for longer review content
   createdAt DateTime @default(now())
 
   // Relationship
