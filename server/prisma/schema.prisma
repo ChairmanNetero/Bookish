@@ -15,9 +15,26 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
   password String
+  reviews  Review[]
 
   @@map("users")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  bookId    String // Store the book ID from the third-party API
+  userId    Int
+  rating    Int // Rating from 1-5
+  content   String   @db.Text // Use Text for longer review content
+  createdAt DateTime @default(now())
+
+  // Relationship
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Ensure one review per user per book
+  @@unique([userId, bookId])
+  @@map("reviews")
 }
