@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import authRoutes from './routes/authRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;

@@ -67,9 +67,9 @@ router.post('/reviews', authMiddleware, async (req, res) => {
 
         // Create a new review
         const review = await prisma.review.create({
-            data: { // Fixed: should be 'data' not 'date'
-                bookId: bookID, // Fixed: should be bookId not bookID
-                userId: userID, // Fixed: should be userId not userID
+            data: {
+                bookId: bookID,
+                userId: userID,
                 rating,
                 content
             },

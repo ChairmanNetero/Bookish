@@ -9,6 +9,15 @@ const BookDetails = () => {
     const [error, setError] = useState(null);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
+    // Reviews state
+    const [showRatingModal, setShowRatingModal] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
+    const [submittingReview, setSubmittingReview] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [userReview, setUserReview] = useState(null);
+
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
@@ -77,8 +86,119 @@ const BookDetails = () => {
             }
         };
 
+        const fetchReviews = async () => {
+            try {
+                setReviewsLoading(true);
+                const response = await axios.get(`http://localhost:3000/api/books/${bookID}`);
+                setReviews(response.data);
+
+                // Check if current user has already reviewed this book
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const userInfo = JSON.parse(atob(token.split('.')[1]));
+                    const existingReview = response.data.find(review => review.userId === userInfo.id);
+                    setUserReview(existingReview);
+                }
+            } catch (err) {
+                console.error('Error fetching reviews:', err);
+            } finally {
+                setReviewsLoading(false);
+            }
+        }
+
         fetchBookDetails();
+        fetchReviews()
     }, [bookID]);
+
+    const handleRateBookClick = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to rate this book');
+            return;
+        }
+
+        if (userReview) {
+            alert('You have already reviewed this book');
+            return;
+        }
+
+        setShowRatingModal(true);
+    };
+
+    const handleSubmitReview = async () => {
+        if (rating === 0) {
+            alert('Please select a rating');
+            return;
+        }
+
+        try {
+            setSubmittingReview(true);
+            const token = localStorage.getItem('token');
+
+            const response = await axios.post(
+                'http://localhost:3000/api/reviews',
+                {
+                    bookID: bookID,
+                    rating: rating,
+                    content: reviewText.trim() || null
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            // Update reviews list with new review
+            setReviews(prev => [response.data.review, ...prev]);
+            setUserReview(response.data.review);
+
+            // Reset form
+            setRating(0);
+            setReviewText('');
+            setShowRatingModal(false);
+
+            alert('Review submitted successfully!');
+        } catch (err) {
+            console.error('Error submitting review:', err);
+            if (err.response?.data?.error) {
+                alert(err.response.data.error);
+            } else {
+                alert('Failed to submit review. Please try again.');
+            }
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
+
+    const renderStars = (currentRating, interactive = false, onStarClick = null) => {
+        return [...Array(5)].map((_, index) => {
+            const starValue = index + 1;
+            return (
+                <span
+                    key={index}
+                    className={`text-2xl cursor-pointer transition-colors duration-200 ${
+                        starValue <= currentRating
+                            ? 'text-yellow-400'
+                            : interactive
+                                ? 'text-gray-300 hover:text-yellow-300'
+                                : 'text-gray-300'
+                    }`}
+                    onClick={() => interactive && onStarClick && onStarClick(starValue)}
+                >
+                    ★
+                </span>
+            );
+        });
+    };
+
+    const calculateAverageRating = () => {
+        if (reviews.length === 0) return 0;
+        const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+        return (total / reviews.length).toFixed(1);
+    };
+
+
 
     // Show loading state
     if (loading) {
@@ -153,6 +273,22 @@ const BookDetails = () => {
                                         by <span className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">{book.authorName}</span>
                                     </p>
                                 </div>
+
+                                {/* Rating Display */}
+                                {reviews.length > 0 && (
+                                    <div className="mb-6">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            {renderStars(Math.round(calculateAverageRating()))}
+                                            <span className="text-lg font-semibold text-gray-700">
+                                                {calculateAverageRating()}
+                                            </span>
+                                            <span className="text-gray-500">
+                                                ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Description */}
                                 <div className="mb-8">
                                     <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
@@ -191,22 +327,100 @@ const BookDetails = () => {
                                     </div>
                                 )}
                                 {/* Action Buttons */}
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-3 mb-8">
                                     <button className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg">
                                         Want to Read
                                     </button>
                                     <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg">
                                         Add to Shelf
                                     </button>
-                                    <button className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-md hover:shadow-lg">
-                                        Rate this book
+                                    <button
+                                        onClick={handleRateBookClick}
+                                        className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-md hover:shadow-lg"
+                                    >
+                                        {userReview ? 'Already Reviewed' : 'Rate this book'}
                                     </button>
+                                </div>
+
+                                {/* Reviews Section */}
+                                <div>
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Reviews</h3>
+                                    {reviewsLoading ? (
+                                        <p className="text-gray-600">Loading reviews...</p>
+                                    ) : reviews.length === 0 ? (
+                                        <p className="text-gray-600">No reviews yet. Be the first to review this book!</p>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {reviews.map((review) => (
+                                                <div key={review.id} className="border-b border-gray-200 pb-4 last:border-b-0">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        {renderStars(review.rating)}
+                                                        <span className="font-medium text-gray-700">{review.user.email}</span>
+                                                        <span className="text-gray-500 text-sm">
+                                                            {new Date(review.createdAt).toLocaleDateString()}
+                                                        </span>
+                                                    </div>
+                                                    {review.content && (
+                                                        <p className="text-gray-700 leading-relaxed">{review.content}</p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Rating Modal */}
+            {showRatingModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">Rate "{book.title}"</h3>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Your Rating
+                            </label>
+                            <div className="flex gap-1">
+                                {renderStars(rating, true, setRating)}
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Review (Optional)
+                            </label>
+                            <textarea
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                                placeholder="Write your review here..."
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                rows={4}
+                            />
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowRatingModal(false)}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                disabled={submittingReview}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitReview}
+                                disabled={submittingReview || rating === 0}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {submittingReview ? 'Submitting...' : 'Submit Review'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
