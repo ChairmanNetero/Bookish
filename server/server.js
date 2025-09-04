@@ -6,8 +6,16 @@ import reviewRoutes from './routes/reviewRoutes.js';
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS configuration object
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+// Use the cors middleware with the specified options
+app.use(cors(corsOptions));
 app.use(express.json())
+
 
 // Create first endpoint
 app.get('/', (req, res) => {

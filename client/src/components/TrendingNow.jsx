@@ -101,7 +101,7 @@ const BookCard = ({book}) => {
 // Main component to fetch and display trending books
 const TrendingNow = () => {
     const [books, setBooks] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -136,8 +136,12 @@ const TrendingNow = () => {
                 setLoading(false);
             }
         };
-        fetchTrendingBooks();
+
+        if (!(books && books.length > 0)) {
+            fetchTrendingBooks();
+        }
     }, []);
+
 
     if (error) {
         return (

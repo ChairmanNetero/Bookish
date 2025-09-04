@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { User, ChevronDown, Search, X, Book } from 'lucide-react';
-import { NavLink } from 'react-router-dom'
+// --- 1. Import useNavigate ---
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -11,8 +12,25 @@ const Navbar = () => {
     const searchTimeoutRef = useRef(null);
     const searchContainerRef = useRef(null);
 
+    // --- 2. Initialize useNavigate ---
+    const navigate = useNavigate();
+
     const toggleProfile = () => {
         setIsProfileOpen(!isProfileOpen);
+    };
+
+    // --- 3. Create the handleLogout function ---
+    const handleLogout = () => {
+        // Clear all items from local storage
+        localStorage.clear();
+
+        // Close the profile dropdown
+        setIsProfileOpen(false);
+
+        // Navigate to the login page
+        navigate('/login');
+
+        console.log('User logged out and redirected to login.');
     };
 
     // Debounced search function
@@ -45,12 +63,10 @@ const Navbar = () => {
         const value = e.target.value;
         setSearchQuery(value);
 
-        // Clear previous timeout
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
         }
 
-        // Set new timeout for debounced search
         searchTimeoutRef.current = setTimeout(() => {
             searchBooks(value);
         }, 300);
@@ -149,7 +165,6 @@ const Navbar = () => {
                                                 key={book.key || index}
                                                 className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                                                 onClick={() => {
-                                                    // Handle book selection - you can navigate to book details page
                                                     console.log('Selected book:', book);
                                                     setShowResults(false);
                                                 }}
@@ -239,12 +254,9 @@ const Navbar = () => {
                                 Account Settings
                             </NavLink>
                             <hr className="my-1 border-gray-200" />
+                            {/* --- 4. Attach the handleLogout function to the button --- */}
                             <button
-                                onClick={() => {
-                                    setIsProfileOpen(false);
-                                    // Add logout logic here
-                                    console.log('Logout clicked');
-                                }}
+                                onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
                             >
                                 Logout

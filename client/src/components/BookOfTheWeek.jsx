@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const BookOfTheWeek = () => {
     const [book, setBook] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // Get week number to ensure same book shows for the entire week
@@ -90,9 +90,10 @@ const BookOfTheWeek = () => {
         }
     };
 
-
     useEffect(() => {
-        fetchBook();
+        if (!book) {
+            fetchBook();
+        }
     }, []);
 
     // Loading state
