@@ -11,14 +11,14 @@ const Navbar = () => {
     const searchTimeoutRef = useRef(null);
     const searchContainerRef = useRef(null);
 
-    // --- 2. Initialize useNavigate ---
+    // Initialize useNavigate
     const navigate = useNavigate();
 
     const toggleProfile = () => {
         setIsProfileOpen(!isProfileOpen);
     };
 
-    // --- 3. Create the handleLogout function ---
+    // Handle logout function
     const handleLogout = () => {
         // Clear all items from local storage
         localStorage.clear();
@@ -30,6 +30,28 @@ const Navbar = () => {
         navigate('/login');
 
         console.log('User logged out and redirected to login.');
+    };
+
+    // Navigate to book details page
+    const handleBookSelect = (book) => {
+        // Clear search and close results
+        setSearchQuery('');
+        setSearchResults([]);
+        setShowResults(false);
+
+        // Extract book ID from the key (e.g., "/works/OL45804W" -> "OL45804W")
+        const bookId = book.key ? book.key.split('/').pop() : null;
+
+        if (bookId) {
+            // Navigate to book details page with the book ID
+            navigate(`/books/${bookId}`, {
+                state: {
+                    bookData: book
+                }
+            });
+        } else {
+            console.error('No valid book ID found');
+        }
     };
 
     // Debounced search function
@@ -162,11 +184,8 @@ const Navbar = () => {
                                         {searchResults.map((book, index) => (
                                             <div
                                                 key={book.key || index}
-                                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                                                onClick={() => {
-                                                    console.log('Selected book:', book);
-                                                    setShowResults(false);
-                                                }}
+                                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                                onClick={() => handleBookSelect(book)}
                                             >
                                                 <div className="flex items-start space-x-3">
                                                     <div className="flex-shrink-0">
@@ -253,7 +272,6 @@ const Navbar = () => {
                                 Account Settings
                             </NavLink>
                             <hr className="my-1 border-gray-200" />
-                            {/* --- 4. Attach the handleLogout function to the button --- */}
                             <button
                                 onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
