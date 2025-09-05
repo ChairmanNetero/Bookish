@@ -108,19 +108,21 @@ const TrendingNow = () => {
         const fetchTrendingBooks = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('https://openlibrary.org/trending/daily.json');
-                const data = response.data;
+                // Use native fetch instead of axios
+                const response = await fetch('https://openlibrary.org/trending/daily.json');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
 
                 // Get a deterministic selection based on the current day
-                // This ensures the same books show for the entire day
                 const today = new Date();
                 const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-
-                // Create a consistent "random" selection based on the day
                 const availableBooks = data.works || [];
                 const selectedBooks = [];
 
-                // Use day of year as seed to get consistent selection
                 for (let i = 0; i < Math.min(8, availableBooks.length); i++) {
                     const index = (dayOfYear + i * 7) % availableBooks.length;
                     if (!selectedBooks.find(book => book.key === availableBooks[index].key)) {
@@ -137,11 +139,8 @@ const TrendingNow = () => {
             }
         };
 
-        if (!(books && books.length > 0)) {
-            fetchTrendingBooks();
-        }
+        fetchTrendingBooks();
     }, []);
-
 
     if (error) {
         return (

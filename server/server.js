@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 // CORS configuration object
 const corsOptions = {
     origin: 'http://localhost:5173',
-    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200
 };
 
 // Use the cors middleware with the specified options

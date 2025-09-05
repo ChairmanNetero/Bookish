@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const BookOfTheWeek = () => {
     const [book, setBook] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Start with loading true
     const [error, setError] = useState(null);
 
     // Get week number to ensure same book shows for the entire week
@@ -29,20 +29,21 @@ const BookOfTheWeek = () => {
         'OL36287W' // The Count of Monte Cristo
     ];
 
-    // Fetching the data using axios
+    // Fetching the data using fetch
     const fetchBook = async () => {
         try {
             setLoading(true);
             setError(null);
 
             const weekNumber = getWeekNumber();
-
-            // Determine which book to feature this week
             const bookId = bookIds[weekNumber % bookIds.length];
 
             // Fetch book details from Open Library
-            const bookResponse = await axios.get(`https://openlibrary.org/works/${bookId}.json`);
-            const bookData = bookResponse.data;
+            const bookResponse = await fetch(`https://openlibrary.org/works/${bookId}.json`);
+            if (!bookResponse.ok) {
+                throw new Error(`HTTP error! status: ${bookResponse.status}`);
+            }
+            const bookData = await bookResponse.json();
             console.log(bookData);
 
             // Fetch author data
@@ -50,34 +51,42 @@ const BookOfTheWeek = () => {
             if (bookData.authors && bookData.authors.length > 0) {
                 try {
                     const authorKey = bookData.authors[0].author.key;
-                    const authorResponse = await axios.get(`https://openlibrary.org${authorKey}.json`);
-                    authorName = authorResponse.data.name;
+                    const authorResponse = await fetch(`https://openlibrary.org${authorKey}.json`);
+                    if (authorResponse.ok) {
+                        const authorData = await authorResponse.json();
+                        authorName = authorData.name;
+                    }
                     console.log(authorName);
                 } catch (authorError) {
                     console.warn('Could not fetch author data:', authorError);
                 }
             }
 
-            // Fetch the description (without external links)
-            const fullDescription = bookData.description;
+            // Fetch the description (safely handle missing description)
+            let description = "No description available.";
+            if (bookData.description) {
+                const fullDescription = typeof bookData.description === 'string'
+                    ? bookData.description
+                    : bookData.description.value || bookData.description;
 
-            const separator = '--';
-            const endIndex = fullDescription.indexOf(separator);
-            const description = fullDescription.slice(0, endIndex);
+                const separator = '--';
+                const endIndex = fullDescription.indexOf(separator);
+                description = endIndex > 0 ? fullDescription.slice(0, endIndex) : fullDescription;
+            }
 
-            // Get cover image - need to get the cover ID from the book data
+            // Get cover image
             let coverImage = null;
             if (bookData.covers && bookData.covers.length > 0) {
-                coverImage = `https://covers.openlibrary.org/b/id/${bookData.covers[1]}-L.jpg`;
+                const coverIndex = bookData.covers.length > 1 ? 1 : 0;
+                coverImage = `https://covers.openlibrary.org/b/id/${bookData.covers[coverIndex]}-L.jpg`;
             }
 
             // Construct the book object
             const bookInfo = {
-                title: bookData.title,
+                title: bookData.title || "Unknown Title",
                 author: authorName,
                 description: description,
                 coverImage: coverImage
-
             }
 
             setBook(bookInfo);
@@ -85,22 +94,35 @@ const BookOfTheWeek = () => {
 
         } catch (err) {
             console.error('Error fetching book data', err);
+            setError('Failed to load book data. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (!book) {
-            fetchBook();
-        }
-    }, []);
+        fetchBook();
+    }, []); // Empty dependency array means this runs once on mount
 
     // Loading state
     if (loading) {
         return (
-            <div>
-                <h2>Loading Book of the Week...</h2>
+            <div className="container mx-auto px-4 py-8">
+                <div className="max-w-md">
+                    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div className="animate-pulse">
+                            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-16 rounded-t-2xl -m-6 mb-6"></div>
+                            <div className="flex gap-4">
+                                <div className="w-24 h-36 bg-gray-200 rounded-lg"></div>
+                                <div className="flex-1">
+                                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                                    <div className="h-3 bg-gray-200 rounded mb-4 w-2/3"></div>
+                                    <div className="h-3 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -108,12 +130,26 @@ const BookOfTheWeek = () => {
     // Error state
     if (error) {
         return (
-            <div>
-                <h2>Book of the Week</h2>
-                <p>{error}</p>
-                <button onClick={fetchBook}>Try Again</button>
+            <div className="container mx-auto px-4 py-8">
+                <div className="max-w-md">
+                    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">Book of the Week</h2>
+                        <p className="text-red-600 mb-4">{error}</p>
+                        <button
+                            onClick={fetchBook}
+                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
             </div>
         );
+    }
+
+    // Don't render if no book data
+    if (!book) {
+        return null;
     }
 
     return (
@@ -139,7 +175,7 @@ const BookOfTheWeek = () => {
                         <div className="flex gap-4 mb-4">
                             {/* Book Cover */}
                             <div className="flex-shrink-0">
-                                {book?.coverImage ? (
+                                {book.coverImage ? (
                                     <img
                                         src={book.coverImage}
                                         alt={`Cover of ${book.title}`}
@@ -162,10 +198,10 @@ const BookOfTheWeek = () => {
                             {/* Book Info */}
                             <div className="flex-1 min-w-0">
                                 <h3 className="text-lg font-bold text-gray-800 leading-tight mb-1 line-clamp-2">
-                                    {book?.title}
+                                    {book.title}
                                 </h3>
                                 <p className="text-indigo-600 font-medium text-sm mb-3">
-                                    by {book?.author}
+                                    by {book.author}
                                 </p>
 
                                 {/* Rating placeholder */}
@@ -183,7 +219,7 @@ const BookOfTheWeek = () => {
                         </div>
 
                         {/* Description */}
-                        {book?.description && (
+                        {book.description && (
                             <div className="border-t border-gray-100 pt-4">
                                 <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
                                     {book.description}

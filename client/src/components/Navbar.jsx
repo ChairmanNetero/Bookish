@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { User, ChevronDown, Search, X, Book } from 'lucide-react';
-// --- 1. Import useNavigate ---
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
