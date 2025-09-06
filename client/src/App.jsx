@@ -22,11 +22,12 @@ const App = () => {
                     </Layout>
                 </ProtectedRoute>}
                 />
-                <Route path="/books/:bookID" element={
+                <Route path="/books/:bookID" element={<ProtectedRoute>
                     <Layout>
                         <BookDetails/>
                     </Layout>
-                }/>
+                </ProtectedRoute>}
+                />
             </Routes>
         </div>
     );
