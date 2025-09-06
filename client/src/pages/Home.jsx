@@ -1,8 +1,11 @@
 import React from 'react';
 import BookOfTheWeek from "../components/BookOfTheWeek.jsx";
 import TrendingNow from "../components/TrendingNow.jsx";
+import {useDocumentTitle} from "../hooks/useDocumentTitle.js";
 
 const Home = () => {
+
+    useDocumentTitle("Home");
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Fixed layout with proper alignment and equal heights */}

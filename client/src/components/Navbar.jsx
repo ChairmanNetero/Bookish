@@ -137,7 +137,7 @@ const Navbar = () => {
 
                     {/* The navigation links */}
                     <div className='flex space-x-12'>
-                        <NavLink to={'/'}
+                        <NavLink to={'/home'}
                                  className="px-3 py-2 rounded-md hover:bg-indigo-100 transition-colors">Home</NavLink>
                         <NavLink to={'/mybooks'} className="px-3 py-2 rounded-md hover:bg-indigo-100 transition-colors">My
                             Books</NavLink>

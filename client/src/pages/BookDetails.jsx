@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {useParams} from "react-router-dom";
+import {useDocumentTitle} from "../hooks/useDocumentTitle.js";
 import axios from 'axios';
 
 const BookDetails = () => {
+
     const {bookID} = useParams();
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -17,6 +19,13 @@ const BookDetails = () => {
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [userReview, setUserReview] = useState(null);
+
+    useDocumentTitle(
+        book?.title ? `${book.title} - Bookish` :
+            loading ? 'Loading... - Bookish' :
+                error ? 'Error - Bookish' :
+                    'Bookish'
+    );
 
     useEffect(() => {
         const fetchBookDetails = async () => {
@@ -66,7 +75,7 @@ const BookDetails = () => {
                 }
 
                 // Fetch the book genre - add null check
-                const genres = bookData.subjects ? bookData.subjects.slice(0, 6) : [];
+                const genres = bookData.subjects ? bookData.subjects.slice(0, 10) : [];
                 console.log(genres);
 
                 // Set the final book state

@@ -4,7 +4,6 @@ import { useBookData } from '../hooks/useBookData';
 import { getWeekNumber } from '../utils/bookDescriptionGenerator';
 import BookCover from './BookCover';
 import StarRating from './StarRating';
-import LoadingSpinner from './LoadingSpinner';
 import ErrorDisplay from './ErrorDisplay';
 
 const BookOfTheWeek = () => {
