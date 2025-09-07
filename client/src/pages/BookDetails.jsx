@@ -208,7 +208,6 @@ const BookDetails = () => {
     };
 
 
-
     // Show loading state
     if (loading) {
         return (
@@ -259,7 +258,8 @@ const BookDetails = () => {
                     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                         <div className="flex flex-col lg:flex-row">
                             {/* Book Cover */}
-                            <div className="lg:w-1/3 p-8 bg-gradient-to-br from-gray-100 to-gray-200 flex justify-center items-start">
+                            <div
+                                className="lg:w-1/3 p-8 bg-gradient-to-br from-gray-100 to-gray-200 flex justify-center items-start">
                                 <div className="relative group">
                                     <img
                                         src={book.coverImage}
@@ -269,7 +269,8 @@ const BookDetails = () => {
                                             e.target.src = 'https://placehold.co/256x384/e5e7eb/6b7280?text=No+Cover';
                                         }}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div
+                                        className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                             </div>
                             {/* Book Information */}
@@ -279,7 +280,8 @@ const BookDetails = () => {
                                         {book.title}
                                     </h1>
                                     <p className="text-xl text-gray-600 mb-4">
-                                        by <span className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">{book.authorName}</span>
+                                        by <span
+                                        className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">{book.authorName}</span>
                                     </p>
                                 </div>
 
@@ -322,7 +324,8 @@ const BookDetails = () => {
                                 {/* Genres */}
                                 {book.genres && book.genres.length > 0 && (
                                     <div className="mb-8">
-                                        <span className="text-sm text-gray-500 uppercase tracking-wide font-medium block mb-3">Genres</span>
+                                        <span
+                                            className="text-sm text-gray-500 uppercase tracking-wide font-medium block mb-3">Genres</span>
                                         <div className="flex flex-wrap gap-2">
                                             {book.genres.map((genre, index) => (
                                                 <span
@@ -337,10 +340,12 @@ const BookDetails = () => {
                                 )}
                                 {/* Action Buttons */}
                                 <div className="flex flex-wrap gap-3 mb-8">
-                                    <button className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg">
+                                    <button
+                                        className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg">
                                         Want to Read
                                     </button>
-                                    <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg">
+                                    <button
+                                        className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg">
                                         Add to Shelf
                                     </button>
                                     <button
@@ -357,14 +362,17 @@ const BookDetails = () => {
                                     {reviewsLoading ? (
                                         <p className="text-gray-600">Loading reviews...</p>
                                     ) : reviews.length === 0 ? (
-                                        <p className="text-gray-600">No reviews yet. Be the first to review this book!</p>
+                                        <p className="text-gray-600">No reviews yet. Be the first to review this
+                                            book!</p>
                                     ) : (
                                         <div className="space-y-4">
                                             {reviews.map((review) => (
-                                                <div key={review.id} className="border-b border-gray-200 pb-4 last:border-b-0">
+                                                <div key={review.id}
+                                                     className="border-b border-gray-200 pb-4 last:border-b-0">
                                                     <div className="flex items-center gap-2 mb-2">
                                                         {renderStars(review.rating)}
-                                                        <span className="font-medium text-gray-700">{review.user.email}</span>
+                                                        <span
+                                                            className="font-medium text-gray-700">{review.user.email}</span>
                                                         <span className="text-gray-500 text-sm">
                                                             {new Date(review.createdAt).toLocaleDateString()}
                                                         </span>

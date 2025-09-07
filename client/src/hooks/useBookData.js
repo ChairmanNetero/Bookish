@@ -1,15 +1,24 @@
 import {useState, useEffect} from 'react';
+import { externalAPI } from '../api/api';
 
 export const useBookData = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const fetchWithErrorHandling = async (url) => {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const response = await externalAPI.get(url);
+            return response.data;
+        } catch (error) {
+            // Handle axios errors
+            if (error.response) {
+                throw new Error(`HTTP error! status: ${error.response.status}`);
+            } else if (error.request) {
+                throw new Error('Network error: No response received');
+            } else {
+                throw new Error(`Request error: ${error.message}`);
+            }
         }
-        return response.json();
     };
 
     const fetchBookDetails = async (bookId) => {
@@ -32,13 +41,12 @@ export const useBookData = () => {
                 }
             }
 
-            // Process description
+            // Fetch description
             let description = "No description available.";
             if (bookData.description) {
                 const fullDescription = typeof bookData.description === 'string'
                     ? bookData.description
                     : bookData.description.value || bookData.description;
-
                 const separator = '--';
                 const endIndex = fullDescription.indexOf(separator);
                 description = endIndex > 0 ? fullDescription.slice(0, endIndex) : fullDescription;
@@ -57,7 +65,6 @@ export const useBookData = () => {
                 description: description,
                 coverImage: coverImage
             };
-
         } catch (err) {
             console.error('Error fetching book data', err);
             setError('Failed to load book data. Please try again.');
@@ -88,7 +95,6 @@ export const useBookData = () => {
             }
 
             return selectedBooks;
-
         } catch (err) {
             console.error("Failed to fetch trending books:", err);
             setError('Failed to load trending books. Please try again.');

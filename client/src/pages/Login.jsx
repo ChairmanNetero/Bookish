@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import LibraryImg from "../assets/Library.jpg";
-import axios from "axios";
+import { backendAPI, setAuthToken } from "../api/api"; // Import the backend API instance
 
 const Login = () => {
     const navigate = useNavigate();
@@ -15,7 +15,6 @@ const Login = () => {
     const navigateToSignup = () => {
         navigate('/signup');
     };
-
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -36,15 +35,14 @@ const Login = () => {
             return setError('Email and password are required.');
         }
 
-        // Make an HTTP Post request to backend API using Axios
+        // Make an HTTP Post request to backend API using the backend instance
         try {
-            const response = await axios.post('http://localhost:3000/api/login', {
+            const response = await backendAPI.post('/login', {
                 email: formData.email,
                 password: formData.password
             });
 
-            console.log('Full response:', response.data); // Debug: see the full response
-
+            console.log('Full response:', response.data);
 
             // Extract token sent by the backend from response
             const token = response.data.token;
@@ -52,8 +50,8 @@ const Login = () => {
             // Save the token to the local storage
             localStorage.setItem('token', token);
 
-            // Set format for the authorization header for all future Axios requests
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // Set the auth token for future backend API calls only
+            setAuthToken(token);
 
             console.log('Successfully logged in', response.data);
             console.log('Token extracted successfully:', token);
