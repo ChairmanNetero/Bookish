@@ -8,7 +8,7 @@ export const backendAPI = axios.create({
 
 // Create an axios instance for external APIs (like OpenLibrary)
 export const externalAPI = axios.create({
-    timeout: 15000,
+    timeout: 25000,
 });
 
 // Function to set the auth token for backend requests
