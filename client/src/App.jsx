@@ -5,6 +5,7 @@ import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Home from "./pages/Home.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
+import Profile from "./pages/Profile.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import './index.css'
@@ -25,6 +26,12 @@ const App = () => {
                 <Route path="/books/:bookID" element={<ProtectedRoute>
                     <Layout>
                         <BookDetails/>
+                    </Layout>
+                </ProtectedRoute>}
+                />
+                <Route path="/profile" element={<ProtectedRoute>
+                    <Layout>
+                        <Profile/>
                     </Layout>
                 </ProtectedRoute>}
                 />
