@@ -2,6 +2,13 @@ import React from 'react';
 
 const Profile = () => {
 
+    // A simple placeholder for an icon or image
+    const PlaceholderIcon = ({ className }) => (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+    );
+
     const currentDate = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
@@ -11,18 +18,32 @@ const Profile = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
-            <div className="max-w-8x`xxl bg-white rounder-lg mx-auto shadow-md overflow-hidden">
+            <div className="max-w-8xl bg-white rounded-lg mx-auto shadow-md overflow-hidden">
                 {/* Welcome Header */}
                 <div className="p-6">
-                    <h1 className="text-2xl font-bold text-gray-800">Welcome, Mazen!</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Welcome, Mazen!</h1>
                     <h3 className="text-md text-gray-500">{currentDate}</h3>
                 </div>
 
                 {/* Hero Banner */}
-                <div className="bg-blue-500 h-48 w-full">
+                <div className="w-full h-40 rounded-lg
+              bg-gradient-to-r from-[#d4e2ff] via-[#fde2e4] to-[#fff1c1]
+              [clip-path:polygon(0%_0,_100%_0,_100%_100%,_0%_100%)]">
                 </div>
             </div>
 
+            {/* 3. Profile Picture and Edit Button */}
+            <div className="p-6 flex justify-between items-center">
+                <div className="flex items-center">
+                    <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden border-4 border-white -mt-16 shadow-lg">
+                        <PlaceholderIcon className="w-16 h-16 rounded-full" />
+                    </div>
+                </div>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    Edit Profile
+                </button>
+
+                </div>
         </div>
     );
 };
