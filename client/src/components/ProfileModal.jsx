@@ -47,7 +47,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
     const handleSave = async () => {
         try {
             setSaving(true);
-            const response = await backendAPI.put('/profile', editedData);
+            const response = await backendAPI.put('/profile/user/me', editedData);
 
             if (onUpdateSuccess) {
                 onUpdateSuccess(response.data.user);

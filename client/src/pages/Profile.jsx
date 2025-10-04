@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { backendAPI } from '../api/api.js';
 import ProfileModal from '../components/ProfileModal.jsx';
 
 const Profile = () => {
+    const { userId } = useParams(); // Get userId from URL params
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userData, setUserData] = useState({
@@ -13,6 +15,9 @@ const Profile = () => {
         bio: '',
         email: ''
     });
+
+    // Determine if viewing own profile or another user's profile
+    const isOwnProfile = !userId;
 
     // A simple placeholder for an icon or image
     const PlaceholderIcon = ({ className }) => (
@@ -31,12 +36,21 @@ const Profile = () => {
     // Fetch user profile data
     useEffect(() => {
         fetchProfile();
-    }, []);
+    }, [userId]); // Re-fetch when userId changes
 
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const response = await backendAPI.get('/profile');
+            let response;
+
+            if (isOwnProfile) {
+                // Fetch own profile
+                response = await backendAPI.get('user/me');
+            } else {
+                // Fetch another user's profile
+                response = await backendAPI.get(`users/${userId}`);
+            }
+
             const user = response.data.user;
 
             setUserData({
@@ -50,6 +64,9 @@ const Profile = () => {
         } catch (error) {
             console.error('Error fetching profile:', error);
             // Handle error - you might want to show a toast or error message
+            if (error.response?.status === 404) {
+                alert('User not found');
+            }
         } finally {
             setLoading(false);
         }
@@ -100,7 +117,10 @@ const Profile = () => {
                 {/* Welcome Header */}
                 <div className="p-6">
                     <h1 className="text-3xl font-bold text-gray-800">
-                        Welcome, {userData.firstName || 'User'}!
+                        {isOwnProfile
+                            ? `Welcome, ${userData.firstName || 'User'}!`
+                            : `${userData.firstName || 'User'}'s Profile`
+                        }
                     </h1>
                     <h3 className="text-md text-gray-500">{currentDate}</h3>
                 </div>
@@ -116,12 +136,15 @@ const Profile = () => {
                             <PlaceholderIcon className="w-16 h-16 rounded-full" />
                         </div>
                     </div>
-                    <button
-                        onClick={handleEditProfile}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-                    >
-                        Edit Profile
-                    </button>
+                    {/* Only show Edit button for own profile */}
+                    {isOwnProfile && (
+                        <button
+                            onClick={handleEditProfile}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                        >
+                            Edit Profile
+                        </button>
+                    )}
                 </div>
 
                 {/* User Information */}
@@ -173,7 +196,10 @@ const Profile = () => {
                                     <span className="text-gray-600 font-medium">Bio:</span>
                                 </div>
                                 <p className="text-gray-800 bg-gray-50 rounded p-3 min-h-[6rem] whitespace-pre-wrap">
-                                    {userData.bio || 'No bio provided yet. Click "Edit Profile" to add one!'}
+                                    {userData.bio || (isOwnProfile
+                                            ? 'No bio provided yet. Click "Edit Profile" to add one!'
+                                            : 'No bio provided.'
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -181,13 +207,15 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* Profile Modal */}
-            <ProfileModal
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                userData={userData}
-                onUpdateSuccess={handleUpdateSuccess}
-            />
+            {/* Profile Modal - Only render for own profile */}
+            {isOwnProfile && (
+                <ProfileModal
+                    isOpen={isModalOpen}
+                    onClose={handleModalClose}
+                    userData={userData}
+                    onUpdateSuccess={handleUpdateSuccess}
+                />
+            )}
         </div>
     );
 };

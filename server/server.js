@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import authRoutes from './routes/authRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-import profileRoutes from './routes/profileRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/', authRoutes)
 app.use('/api/', reviewRoutes)
-app.use('/api/', profileRoutes)
+app.use('/api/', userRoutes)
 
 app.listen(port, () => {
     console.log(`Server started on port ${port}`)

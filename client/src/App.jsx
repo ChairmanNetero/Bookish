@@ -29,7 +29,13 @@ const App = () => {
                     </Layout>
                 </ProtectedRoute>}
                 />
-                <Route path="/profile/userId" element={<ProtectedRoute>
+                <Route path="/user/me" element={<ProtectedRoute>
+                    <Layout>
+                        <Profile/>
+                    </Layout>
+                </ProtectedRoute>}
+                />
+                <Route path="/users/:userId" element={<ProtectedRoute>
                     <Layout>
                         <Profile/>
                     </Layout>

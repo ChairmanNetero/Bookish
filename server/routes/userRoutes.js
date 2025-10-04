@@ -8,7 +8,7 @@ const router = express.Router()
 router.use(authMiddleware)
 
 // Get user profile
-router.get('/profile', async (req, res) => {
+router.get('/user/me', async (req, res) => {
     try {
         const user = await prisma.user.findUniqueOrThrow({
             where: { id: req.user.id },
@@ -33,8 +33,40 @@ router.get('/profile', async (req, res) => {
     }
 })
 
+router.get('/users/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params
+
+        const user = await prisma.user.findUniqueOrThrow({
+            where: { id: userId },
+            select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                gender: true,
+                country: true,
+                bio: true,
+            }
+        })
+
+        res.status(200).json({
+            message: 'Profile retrieved successfully',
+            user
+        })
+    } catch (error) {
+        console.error('Profile retrieval error:', error)
+
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'User not found' })
+        }
+
+        res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
 // Update user profile
-router.put('/profile', async (req, res) => {
+router.put('/user/me', async (req, res) => {
     try {
         const { firstName, lastName, gender, country, bio } = req.body
 
