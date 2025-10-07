@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { backendAPI } from '../api/api.js';
 import { countryOptions, genderOptions } from '../utils/countryOptions.js';
+import ImageUploader from './ImageUploader';
 
 const PlaceholderIcon = ({ className }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -10,6 +11,7 @@ const PlaceholderIcon = ({ className }) => (
 
 const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
     const [saving, setSaving] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
     const [editedData, setEditedData] = useState({
         firstName: '',
         lastName: '',
@@ -34,6 +36,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
                 country: userData.country || '',
                 bio: userData.bio || ''
             });
+            setProfileImage(userData.profileImage || null);
         }
     }, [isOpen, userData]);
 
@@ -44,15 +47,22 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
         }));
     };
 
+    const handleImageUploadSuccess = (data) => {
+        // Update the profile image with the response from the server
+        setProfileImage(data.imageUrl || data.url);
+        alert('Profile image uploaded successfully!');
+    };
+
     const handleSave = async () => {
         try {
             setSaving(true);
             const response = await backendAPI.put('/profile/user/me', editedData);
-
             if (onUpdateSuccess) {
-                onUpdateSuccess(response.data.user);
+                onUpdateSuccess({
+                    ...response.data.user,
+                    profileImage: profileImage
+                });
             }
-
             onClose();
         } catch (error) {
             console.error('Error updating profile:', error);
@@ -70,6 +80,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
             country: userData.country || '',
             bio: userData.bio || ''
         });
+        setProfileImage(userData.profileImage || null);
         onClose();
     };
 
@@ -91,14 +102,16 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
                     <div className="w-full h-40 rounded-lg bg-gradient-to-r from-[#d4e2ff] via-[#fde2e4] to-[#fff1c1] [clip-path:polygon(0%_0,_100%_0,_100%_100%,_0%_100%)]">
                     </div>
 
-                    {/* Profile Picture and Action Buttons */}
-                    <div className="p-6 flex justify-between items-center">
-                        <div className="flex items-center">
-                            <div className="w-40 h-40 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden border-4 border-white -mt-0 shadow-lg">
-                                <PlaceholderIcon className="w-16 h-16 rounded-full" />
-                            </div>
+                    {/* Profile Picture Upload and Action Buttons */}
+                    <div className="p-6 flex justify-between items-start">
+                        <div className="flex-1">
+                            <ImageUploader
+                                currentImage={profileImage}
+                                onUploadSuccess={handleImageUploadSuccess}
+                                apiEndpoint="/api/upload/profile"
+                            />
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 ml-4">
                             <button
                                 onClick={handleCancel}
                                 disabled={saving}

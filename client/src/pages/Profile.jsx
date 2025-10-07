@@ -4,7 +4,7 @@ import { backendAPI } from '../api/api.js';
 import ProfileModal from '../components/ProfileModal.jsx';
 
 const Profile = () => {
-    const { userId } = useParams(); // Get userId from URL params
+    const { userId } = useParams();
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userData, setUserData] = useState({
@@ -13,13 +13,12 @@ const Profile = () => {
         gender: '',
         country: '',
         bio: '',
-        email: ''
+        email: '',
+        profileImage: null
     });
 
-    // Determine if viewing own profile or another user's profile
     const isOwnProfile = !userId;
 
-    // A simple placeholder for an icon or image
     const PlaceholderIcon = ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -33,10 +32,9 @@ const Profile = () => {
         day: 'numeric',
     });
 
-    // Fetch user profile data
     useEffect(() => {
         fetchProfile();
-    }, [userId]); // Re-fetch when userId changes
+    }, [userId]);
 
     const fetchProfile = async () => {
         try {
@@ -44,10 +42,8 @@ const Profile = () => {
             let response;
 
             if (isOwnProfile) {
-                // Fetch own profile
                 response = await backendAPI.get('user/me');
             } else {
-                // Fetch another user's profile
                 response = await backendAPI.get(`users/${userId}`);
             }
 
@@ -59,11 +55,11 @@ const Profile = () => {
                 gender: user.gender || '',
                 country: user.country || '',
                 bio: user.bio || '',
-                email: user.email || ''
+                email: user.email || '',
+                profileImage: user.profileImage || null
             });
         } catch (error) {
             console.error('Error fetching profile:', error);
-            // Handle error - you might want to show a toast or error message
             if (error.response?.status === 404) {
                 alert('User not found');
             }
@@ -81,7 +77,6 @@ const Profile = () => {
     };
 
     const handleUpdateSuccess = (updatedUser) => {
-        // Update local user data with the updated information
         setUserData(prev => ({
             ...prev,
             ...updatedUser
@@ -133,10 +128,17 @@ const Profile = () => {
                 <div className="p-6 flex justify-between items-center">
                     <div className="flex items-center">
                         <div className="w-40 h-40 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden border-4 border-white -mt-0 shadow-lg">
-                            <PlaceholderIcon className="w-16 h-16 rounded-full" />
+                            {userData.profileImage ? (
+                                <img
+                                    src={userData.profileImage}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <PlaceholderIcon className="w-16 h-16 rounded-full" />
+                            )}
                         </div>
                     </div>
-                    {/* Only show Edit button for own profile */}
                     {isOwnProfile && (
                         <button
                             onClick={handleEditProfile}
@@ -149,7 +151,6 @@ const Profile = () => {
 
                 {/* User Information */}
                 <div className="px-6 pb-8">
-                    {/* Personal Information Card */}
                     <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-100 shadow-sm">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                             <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,25 +159,21 @@ const Profile = () => {
                             Personal Information
                         </h3>
                         <div className="space-y-3">
-                            {/* Email */}
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">Email:</span>
                                 <span className="text-gray-800">{userData.email}</span>
                             </div>
 
-                            {/* First Name */}
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">First Name:</span>
                                 <span className="text-gray-800">{userData.firstName || 'Not provided'}</span>
                             </div>
 
-                            {/* Last Name */}
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">Last Name:</span>
                                 <span className="text-gray-800">{userData.lastName || 'Not provided'}</span>
                             </div>
 
-                            {/* Gender */}
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">Gender:</span>
                                 <span className="text-gray-800">
@@ -184,13 +181,11 @@ const Profile = () => {
                                 </span>
                             </div>
 
-                            {/* Country */}
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">Country:</span>
                                 <span className="text-gray-800">{userData.country || 'Not provided'}</span>
                             </div>
 
-                            {/* Bio */}
                             <div className="py-2">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="text-gray-600 font-medium">Bio:</span>
@@ -207,7 +202,6 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* Profile Modal - Only render for own profile */}
             {isOwnProfile && (
                 <ProfileModal
                     isOpen={isModalOpen}
