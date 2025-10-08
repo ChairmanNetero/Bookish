@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Routes, Route} from 'react-router-dom';
 import LandingPage from "./pages/LandingPage.jsx";
 import Login from "./pages/Login.jsx";
@@ -9,8 +9,14 @@ import Profile from "./pages/Profile.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import './index.css'
+import {loadAuthToken} from "./api/api.js";
 
 const App = () => {
+    useEffect(() => {
+        // Load auth token when app starts
+        loadAuthToken();
+    }, []);
+
     return (
         <div>
             <Routes>

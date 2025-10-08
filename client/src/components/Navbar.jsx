@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { User, ChevronDown, Search, X, Book } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom'
+import {removeAuthToken} from "../api/api.js";
 
 const Navbar = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -22,6 +23,8 @@ const Navbar = () => {
     const handleLogout = () => {
         // Clear all items from local storage
         localStorage.clear();
+
+        removeAuthToken();
 
         // Close the profile dropdown
         setIsProfileOpen(false);

@@ -15,12 +15,27 @@ export const externalAPI = axios.create({
 export const setAuthToken = (token) => {
     if (token) {
         backendAPI.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        localStorage.setItem('authToken', token); // Store token in localStorage
     } else {
         delete backendAPI.defaults.headers.common['Authorization'];
+        localStorage.removeItem('authToken'); // Remove token from localStorage
     }
 };
 
 // Function to remove auth token
 export const removeAuthToken = () => {
     delete backendAPI.defaults.headers.common['Authorization'];
+    localStorage.removeItem('authToken'); // Remove token from localStorage
 };
+
+// Function to load token from localStorage on app start
+export const loadAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        backendAPI.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    return token;
+};
+
+// Initialize token from localStorage when the module loads
+loadAuthToken();
