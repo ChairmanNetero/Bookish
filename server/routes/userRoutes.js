@@ -20,6 +20,7 @@ router.get('/user/me', async (req, res) => {
                 gender: true,
                 country: true,
                 bio: true,
+                profileImage: true,
             }
         })
 
@@ -47,6 +48,7 @@ router.get('/users/:userId', async (req, res) => {
                 gender: true,
                 country: true,
                 bio: true,
+                profileImage: true,
             }
         })
 
@@ -104,6 +106,7 @@ router.put('/user/me', async (req, res) => {
                 gender: true,
                 country: true,
                 bio: true,
+                profileImage: true,
             }
         })
 
@@ -160,6 +163,7 @@ router.patch('/profile/:field', async (req, res) => {
                 gender: true,
                 country: true,
                 bio: true,
+                profileImage: true,
             }
         })
 

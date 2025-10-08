@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { backendAPI } from '../api/api.js';
 import { Upload, X, User } from 'lucide-react';
 
-const ImageUploader = ({ currentImage, onUploadSuccess, apiEndpoint = '/api/upload/profile' }) => {
+const ImageUploader = ({ currentImage, onUploadSuccess, apiEndpoint = '/upload/profile' }) => {
     const [preview, setPreview] = useState(currentImage || null);
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -11,7 +11,13 @@ const ImageUploader = ({ currentImage, onUploadSuccess, apiEndpoint = '/api/uplo
     const handleFileSelect = (e) => {
         const selectedFile = e.target.files[0];
 
-        if (!selectedFile) return
+        if (!selectedFile) return;
+
+        // Validate file type
+        if (!selectedFile.type.startsWith('image/')) {
+            setError('Please select a valid image file');
+            return;
+        }
 
         // Validate file size (5MB max)
         if (selectedFile.size > 5 * 1024 * 1024) {
@@ -40,7 +46,7 @@ const ImageUploader = ({ currentImage, onUploadSuccess, apiEndpoint = '/api/uplo
             const formData = new FormData();
             formData.append('image', file);
 
-            const response = await axios.post(apiEndpoint, formData, {
+            const response = await backendAPI.post(apiEndpoint, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -53,7 +59,8 @@ const ImageUploader = ({ currentImage, onUploadSuccess, apiEndpoint = '/api/uplo
 
             setFile(null);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to upload image');
+            console.error('Upload error:', err);
+            setError(err.response?.data?.error || err.response?.data?.message || 'Failed to upload image');
         } finally {
             setUploading(false);
         }

@@ -22,14 +22,15 @@ enum Gender {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
-  firstName String?
-  lastName  String?
-  gender    Gender?
-  country   String?
-  bio       String? @db.Text // Good for long descriptions
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  password     String
+  firstName    String?
+  lastName     String?
+  gender       Gender?
+  country      String?
+  bio          String? @db.Text // Good for long descriptions
+  profileImage String?
 
   reviews Review[]
 
