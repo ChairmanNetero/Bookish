@@ -56,7 +56,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
     const handleSave = async () => {
         try {
             setSaving(true);
-            const response = await backendAPI.put('/profile/user/me', editedData);
+            const response = await backendAPI.put('/user/me', editedData);
             if (onUpdateSuccess) {
                 onUpdateSuccess({
                     ...response.data.user,
@@ -108,7 +108,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
                             <ImageUploader
                                 currentImage={profileImage}
                                 onUploadSuccess={handleImageUploadSuccess}
-                                apiEndpoint="/api/upload/profile"
+                                apiEndpoint="/upload/profile"
                             />
                         </div>
                         <div className="flex gap-2 ml-4">
