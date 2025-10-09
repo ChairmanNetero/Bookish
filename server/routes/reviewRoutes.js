@@ -37,6 +37,49 @@ router.get('/books/:bookID', async (req, res) => {
     }
 })
 
+// Get all reviews for a specific user (access: private)
+router.get('/reviews/user/:userId', authMiddleware, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const requestingUserId = req.user.id;
+
+        // Convert userId to integer
+        const userIdInt = parseInt(userId, 10);
+
+        // Validate that userId is a valid number
+        if (isNaN(userIdInt)) {
+            return res.status(400).json({ error: 'Invalid user ID format' });
+        }
+
+        // Optional: Check if user is requesting their own reviews or has permission
+        // For now, allowing any authenticated user to view reviews
+
+        const reviews = await prisma.review.findMany({
+            where: {
+                userId: userIdInt
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        res.status(200).json(reviews);
+    } catch (error) {
+        console.error('Error fetching user reviews:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Create a new review for a book (access : private)
 router.post('/reviews', authMiddleware, async (req, res) => {
     try {
