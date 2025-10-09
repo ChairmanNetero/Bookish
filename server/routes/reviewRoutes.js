@@ -18,7 +18,9 @@ router.get('/books/:bookID', async (req, res) => {
                 user: {
                     select: {
                         id: true,
-                        email: true
+                        email: true,
+                        firstName: true,
+                        lastName: true
                     }
                 }
             },

@@ -3,6 +3,14 @@ import InteractiveStarRating from './InteractiveStarRating';
 import LoadingSpinner from '../LoadingSpinner';
 
 const ReviewsSection = ({ reviews, reviewsLoading }) => {
+    // Helper function to get display name
+    const getDisplayName = (user) => {
+        if (user.firstName && user.lastName) {
+            return `${user.firstName} ${user.lastName}`;
+        }
+        return user.email;
+    };
+
     if (reviewsLoading) {
         return (
             <div>
@@ -30,7 +38,7 @@ const ReviewsSection = ({ reviews, reviewsLoading }) => {
                                     size="text-lg"
                                 />
                                 <span className="font-medium text-gray-700">
-                                    {review.user.email}
+                                    {getDisplayName(review.user)}
                                 </span>
                                 <span className="text-gray-500 text-sm">
                                     {new Date(review.createdAt).toLocaleDateString()}
