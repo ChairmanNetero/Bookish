@@ -1,14 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import InteractiveStarRating from './InteractiveStarRating';
 import LoadingSpinner from '../LoadingSpinner';
 
 const ReviewsSection = ({ reviews, reviewsLoading }) => {
+    const navigate = useNavigate();
+
     // Helper function to get display name
     const getDisplayName = (user) => {
         if (user.firstName && user.lastName) {
             return `${user.firstName} ${user.lastName}`;
         }
         return user.email;
+    };
+
+    // Navigate to user profile
+    const handleUserClick = (userId) => {
+        navigate(`/users/${userId}`);
     };
 
     if (reviewsLoading) {
@@ -37,9 +45,12 @@ const ReviewsSection = ({ reviews, reviewsLoading }) => {
                                     interactive={false}
                                     size="text-lg"
                                 />
-                                <span className="font-medium text-gray-700">
+                                <button
+                                    onClick={() => handleUserClick(review.user.id)}
+                                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors cursor-pointer"
+                                >
                                     {getDisplayName(review.user)}
-                                </span>
+                                </button>
                                 <span className="text-gray-500 text-sm">
                                     {new Date(review.createdAt).toLocaleDateString()}
                                 </span>

@@ -38,8 +38,16 @@ router.get('/users/:userId', async (req, res) => {
     try {
         const { userId } = req.params
 
-        const user = await prisma.user.findUniqueOrThrow({
-            where: { id: userId },
+        // Convert userId to integer since it comes as a string from URL params
+        const userIdInt = parseInt(userId, 10)
+
+        // Validate that userId is a valid number
+        if (isNaN(userIdInt)) {
+            return res.status(400).json({ error: 'Invalid user ID format' })
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userIdInt },
             select: {
                 id: true,
                 email: true,
@@ -52,17 +60,17 @@ router.get('/users/:userId', async (req, res) => {
             }
         })
 
+        // Check if user exists
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' })
+        }
+
         res.status(200).json({
             message: 'Profile retrieved successfully',
             user
         })
     } catch (error) {
         console.error('Profile retrieval error:', error)
-
-        if (error.code === 'P2025') {
-            return res.status(404).json({ error: 'User not found' })
-        }
-
         res.status(500).json({ error: 'Internal server error' })
     }
 })
