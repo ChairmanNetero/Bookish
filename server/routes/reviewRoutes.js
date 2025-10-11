@@ -12,7 +12,7 @@ router.get('/books/:bookID', async (req, res) => {
         // Get reviews for the book with user information
         const reviews = await prisma.review.findMany({
             where: {
-                bookId: bookID // Fixed: should be bookId not bookID
+                bookId: bookID
             },
             include: {
                 user: {
@@ -50,9 +50,6 @@ router.get('/reviews/user/:userId', authMiddleware, async (req, res) => {
         if (isNaN(userIdInt)) {
             return res.status(400).json({ error: 'Invalid user ID format' });
         }
-
-        // Optional: Check if user is requesting their own reviews or has permission
-        // For now, allowing any authenticated user to view reviews
 
         const reviews = await prisma.review.findMany({
             where: {
@@ -110,27 +107,49 @@ router.post('/reviews', authMiddleware, async (req, res) => {
             return res.status(409).json({error: 'You have already reviewed this book'})
         }
 
-        // Create a new review
-        const review = await prisma.review.create({
-            data: {
-                bookId: bookID,
-                userId: userID,
-                rating,
-                content
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        email: true
+        // Use a transaction to create review and remove from reading list
+        const result = await prisma.$transaction(async (tx) => {
+            // Create the review
+            const review = await tx.review.create({
+                data: {
+                    bookId: bookID,
+                    userId: userID,
+                    rating,
+                    content
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            email: true
+                        }
                     }
                 }
+            });
+
+            // Try to remove from reading list if it exists
+            try {
+                await tx.readingList.delete({
+                    where: {
+                        userId_bookId: {
+                            userId: userID,
+                            bookId: bookID
+                        }
+                    }
+                });
+            } catch (error) {
+                // Ignore if book wasn't in reading list
+                if (error.code !== 'P2025') {
+                    throw error;
+                }
             }
+
+            return review;
         });
 
         res.status(201).json({
             message: 'Review created successfully',
-            review
+            review: result
         })
     } catch (error) {
         console.error('Error creating review:', error)

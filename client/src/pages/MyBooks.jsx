@@ -2,50 +2,64 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { backendAPI } from '../api/api';
 import { useBookData } from '../hooks/useBookData';
-import BookCover from '../components/BookCover';
-import StarRating from '../components/StarRating';
-import { Loader2, AlertCircle, BookOpen } from 'lucide-react';
+import ReadBooks from '../components/myBooks/ReadBooks.jsx';
+import WantToRead from '../components/myBooks/WantToRead.jsx';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 const MyBooks = () => {
     const [reviews, setReviews] = useState([]);
+    const [readingList, setReadingList] = useState([]);
     const [bookDetails, setBookDetails] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState('read'); // 'read' or 'wantToRead'
     const navigate = useNavigate();
     const { fetchBookDetails } = useBookData();
 
     useEffect(() => {
-        fetchUserReviews();
+        fetchAllData();
     }, []);
 
-    const fetchUserReviews = async () => {
+    const fetchAllData = async () => {
         try {
             setLoading(true);
             setError(null);
 
-            // Fetch user profile to get their reviews
+            // Fetch user profile to get their ID
             const response = await backendAPI.get('/user/me');
             const userId = response.data.user.id;
 
-            // Fetch all reviews
-            const reviewsResponse = await backendAPI.get(`/reviews/user/${userId}`);
+            // Fetch reviews and reading list in parallel
+            const [reviewsResponse, readingListResponse] = await Promise.all([
+                backendAPI.get(`/reviews/user/${userId}`),
+                backendAPI.get('/reading-list')
+            ]);
+
             const userReviews = reviewsResponse.data;
+            const userReadingList = readingListResponse.data;
 
             setReviews(userReviews);
+            setReadingList(userReadingList);
 
-            // Fetch book details for each review
-            const detailsPromises = userReviews.map(async (review) => {
+            // Collect all unique book IDs
+            const reviewBookIds = userReviews.map(review => review.bookId);
+            const readingListBookIds = userReadingList.map(item => item.bookId);
+            const allBookIds = [...new Set([...reviewBookIds, ...readingListBookIds])];
+
+            // Fetch book details for all books
+            const detailsPromises = allBookIds.map(async (bookId) => {
                 try {
-                    const details = await fetchBookDetails(review.bookId);
-                    return { bookId: review.bookId, details };
+                    const details = await fetchBookDetails(bookId);
+                    return { bookId, details };
                 } catch (err) {
-                    console.error(`Failed to fetch details for book ${review.bookId}:`, err);
+                    console.error(`Failed to fetch details for book ${bookId}:`, err);
                     return {
-                        bookId: review.bookId,
+                        bookId,
                         details: {
                             title: 'Unknown Title',
                             author: 'Unknown Author',
-                            coverImage: null
+                            coverImage: null,
+                            description: ''
                         }
                     };
                 }
@@ -59,15 +73,11 @@ const MyBooks = () => {
 
             setBookDetails(detailsMap);
         } catch (err) {
-            console.error('Error fetching reviews:', err);
+            console.error('Error fetching data:', err);
             setError('Failed to load your books. Please try again.');
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleBookClick = (bookId) => {
-        navigate(`/books/${bookId}`);
     };
 
     const handleEditClick = (e, reviewId) => {
@@ -76,9 +86,15 @@ const MyBooks = () => {
         console.log('Edit review:', reviewId);
     };
 
-    const truncateText = (text, maxLength = 200) => {
-        if (!text || text.length <= maxLength) return text;
-        return text.slice(0, maxLength) + '...';
+    const handleRemoveFromReadingList = async (e, bookId) => {
+        e.stopPropagation();
+        try {
+            await backendAPI.delete(`/reading-list/${bookId}`);
+            setReadingList(readingList.filter(item => item.bookId !== bookId));
+        } catch (err) {
+            console.error('Error removing from reading list:', err);
+            alert('Failed to remove book from reading list');
+        }
     };
 
     if (loading) {
@@ -100,7 +116,7 @@ const MyBooks = () => {
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Books</h2>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <button
-                        onClick={fetchUserReviews}
+                        onClick={fetchAllData}
                         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
                         Try Again
@@ -110,25 +126,7 @@ const MyBooks = () => {
         );
     }
 
-    if (reviews.length === 0) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center max-w-md">
-                    <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">No Books Yet</h2>
-                    <p className="text-gray-600 mb-6">
-                        You haven't reviewed any books yet. Start exploring and share your thoughts!
-                    </p>
-                    <button
-                        onClick={() => navigate('/home')}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                    >
-                        Discover Books
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    const totalBooks = reviews.length + readingList.length;
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
@@ -136,90 +134,50 @@ const MyBooks = () => {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">My Books</h1>
                     <p className="text-gray-600">
-                        {reviews.length} {reviews.length === 1 ? 'book' : 'books'} reviewed
+                        {totalBooks} {totalBooks === 1 ? 'book' : 'books'} total
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    {reviews.map((review) => {
-                        const book = bookDetails[review.bookId] || {};
-                        return (
-                            <div
-                                key={review.id}
-                                onClick={() => handleBookClick(review.bookId)}
-                                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden border border-gray-200"
-                            >
-                                <div className="flex p-4 gap-4">
-                                    {/* Book Cover */}
-                                    <div className="flex-shrink-0">
-                                        <BookCover
-                                            src={book.coverImage}
-                                            alt={book.title}
-                                            className="w-20 h-28 object-cover rounded shadow-sm"
-                                        />
-                                    </div>
-
-                                    {/* Book Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="mb-2">
-                                            <h2 className="text-lg font-semibold text-gray-800 hover:text-indigo-600 transition-colors mb-1">
-                                                {book.title || 'Loading...'}
-                                            </h2>
-                                            <p className="text-sm text-gray-600">
-                                                {book.author || 'Loading...'}
-                                            </p>
-                                        </div>
-
-                                        {/* Rating */}
-                                        <div className="mb-3">
-                                            <StarRating
-                                                rating={review.rating}
-                                                maxRating={5}
-                                                size="w-5 h-5"
-                                                label=""
-                                                className="flex items-center gap-1"
-                                            />
-                                        </div>
-
-                                        {/* Review Status */}
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                read
-                                            </span>
-                                            <button
-                                                onClick={(e) => handleEditClick(e, review.id)}
-                                                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
-                                            >
-                                                [edit]
-                                            </button>
-                                        </div>
-
-                                        {/* Review Content */}
-                                        {review.content && (
-                                            <div className="text-sm text-gray-700 leading-relaxed">
-                                                <p>{truncateText(review.content)}</p>
-                                                {review.content.length > 200 && (
-                                                    <button className="text-indigo-600 hover:text-indigo-800 font-medium mt-1">
-                                                        ...more
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* Date */}
-                                        <div className="mt-3 text-xs text-gray-500">
-                                            Reviewed on {new Date(review.createdAt).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                {/* Tabs */}
+                <div className="border-b border-gray-200 mb-6">
+                    <nav className="flex space-x-8">
+                        <button
+                            onClick={() => setActiveTab('read')}
+                            className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                                activeTab === 'read'
+                                    ? 'border-indigo-600 text-indigo-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
+                        >
+                            Read ({reviews.length})
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('wantToRead')}
+                            className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                                activeTab === 'wantToRead'
+                                    ? 'border-indigo-600 text-indigo-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
+                        >
+                            Want to Read ({readingList.length})
+                        </button>
+                    </nav>
                 </div>
+
+                {/* Content */}
+                {activeTab === 'read' ? (
+                    <ReadBooks
+                        reviews={reviews}
+                        bookDetails={bookDetails}
+                        onEditClick={handleEditClick}
+                    />
+                ) : (
+                    <WantToRead
+                        readingList={readingList}
+                        bookDetails={bookDetails}
+                        onRemoveClick={handleRemoveFromReadingList}
+                    />
+                )}
             </div>
         </div>
     );

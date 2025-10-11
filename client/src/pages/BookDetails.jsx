@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDocumentTitle } from "../hooks/useDocumentTitle.js";
 import { useBookData } from "../hooks/useBookData.js";
 import { useReviews } from "../components/bookDetails/useReview.js";
+import { useReadingList } from "../hooks/useReadingList.js";
 import axios from 'axios';
 
 // Components
@@ -33,6 +34,13 @@ const BookDetails = () => {
         submitReview,
         calculateAverageRating
     } = useReviews(bookID);
+
+    const {
+        isInReadingList,
+        loading: readingListLoading,
+        actionLoading: readingListActionLoading,
+        toggleReadingList
+    } = useReadingList(bookID);
 
     useDocumentTitle(
         book?.title ? `${book.title} - Bookish` :
@@ -109,7 +117,7 @@ const BookDetails = () => {
     }, [bookID]);
 
     const handleRateBookClick = () => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         if (!token) {
             alert('Please log in to rate this book');
             return;
@@ -121,6 +129,24 @@ const BookDetails = () => {
         }
 
         setShowRatingModal(true);
+    };
+
+    const handleToggleReadingList = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert('Please log in to add books to your reading list');
+            return;
+        }
+
+        if (userReview) {
+            alert('You have already reviewed this book. Remove your review first to add it to "Want to Read".');
+            return;
+        }
+
+        const result = await toggleReadingList();
+        if (!result.success && result.message) {
+            alert(result.message);
+        }
     };
 
     const handleSubmitReview = async () => {
@@ -178,6 +204,9 @@ const BookDetails = () => {
                                 reviewCount={reviewCount}
                                 onRateBookClick={handleRateBookClick}
                                 userReview={userReview}
+                                isInReadingList={isInReadingList}
+                                onToggleReadingList={handleToggleReadingList}
+                                readingListLoading={readingListActionLoading}
                             />
                         </div>
 

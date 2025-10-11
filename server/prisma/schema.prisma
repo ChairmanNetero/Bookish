@@ -32,7 +32,8 @@ model User {
   bio          String? @db.Text // Good for long descriptions
   profileImage String?
 
-  reviews Review[]
+  reviews     Review[]
+  readingList ReadingList[]
 
   @@map("users")
 }
@@ -51,4 +52,16 @@ model Review {
   // Ensure one review per user per book
   @@unique([userId, bookId])
   @@map("reviews")
+}
+
+model ReadingList {
+  id      Int      @id @default(autoincrement())
+  bookId  String
+  userId  Int
+  addedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@map("reading_list")
 }
