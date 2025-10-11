@@ -27,7 +27,7 @@ const BookInfoSection = ({
                     rating={averageRating || 0}
                     maxRating={5}
                     size="w-6 h-6"
-                    label={`${(averageRating || 0).toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'})`}
+                    label={`${(parseFloat(averageRating) || 0).toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'})`}
                 />
             </div>
 
