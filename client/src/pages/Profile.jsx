@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { backendAPI } from '../api/api.js';
 import ProfileModal from '../components/ProfileModal.jsx';
+import {useDocumentTitle} from "../hooks/useDocumentTitle.js";
 
 const Profile = () => {
+
+    useDocumentTitle("Profile");
+
     const { userId } = useParams();
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);

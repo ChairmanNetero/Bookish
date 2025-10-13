@@ -5,8 +5,12 @@ import { useBookData } from '../hooks/useBookData';
 import ReadBooks from '../components/myBooks/ReadBooks.jsx';
 import WantToRead from '../components/myBooks/WantToRead.jsx';
 import { Loader2, AlertCircle } from 'lucide-react';
+import {useDocumentTitle} from "../hooks/useDocumentTitle.js";
 
 const MyBooks = () => {
+
+    useDocumentTitle("My Books");
+
     const [reviews, setReviews] = useState([]);
     const [readingList, setReadingList] = useState([]);
     const [bookDetails, setBookDetails] = useState({});
