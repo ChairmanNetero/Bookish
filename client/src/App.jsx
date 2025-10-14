@@ -11,13 +11,8 @@ import Discover from "./pages/Discover.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import './index.css'
-import {loadAuthToken} from "./api/api.js";
 
 const App = () => {
-    useEffect(() => {
-        // Load auth token when app starts
-        loadAuthToken();
-    }, []);
 
     return (
         <div>
