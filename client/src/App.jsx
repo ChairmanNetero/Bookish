@@ -8,6 +8,7 @@ import BookDetails from "./pages/BookDetails.jsx";
 import Profile from "./pages/Profile.jsx";
 import MyBooks from "./pages/MyBooks.jsx";
 import Discover from "./pages/Discover.jsx";
+import GenreBooks from "./components/discover/GenreBooks.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import './index.css'
@@ -53,6 +54,12 @@ const App = () => {
                 <Route path="/discover" element={<ProtectedRoute>
                     <Layout>
                         <Discover/>
+                    </Layout>
+                </ProtectedRoute>}
+                />
+                <Route path="/discover/:genre" element={<ProtectedRoute>
+                    <Layout>
+                        <GenreBooks/>
                     </Layout>
                 </ProtectedRoute>}
                 />
