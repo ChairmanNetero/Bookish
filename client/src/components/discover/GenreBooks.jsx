@@ -51,40 +51,40 @@ const GenreBooks = () => {
             { id: 'OL893415W', title: 'Dune', author: 'Frank Herbert' }
         ],
         'classics': [
-            { id: 'OL53919W', title: 'To Kill a Mockingbird', author: 'Harper Lee' },
-            { id: 'OL24341W', title: '1984', author: 'George Orwell' },
-            { id: 'OL471463W', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald' },
-            { id: 'OL45804W', title: 'Moby-Dick', author: 'Herman Melville' },
-            { id: 'OL19828W', title: 'War and Peace', author: 'Leo Tolstoy' },
-            { id: 'OL108561W', title: 'Crime and Punishment', author: 'Fyodor Dostoevsky' },
-            { id: 'OL24180W', title: 'Brave New World', author: 'Aldous Huxley' },
-            { id: 'OL456638W', title: 'The Catcher in the Rye', author: 'J.D. Salinger' },
-            { id: 'OL1099529W', title: 'The Picture of Dorian Gray', author: 'Oscar Wilde' },
-            { id: 'OL77908W', title: 'Frankenstein', author: 'Mary Shelley' }
+            { id: 'OL3140822W', title: 'To Kill a Mockingbird', author: 'Harper Lee' },
+            { id: 'OL1168083W', title: '1984', author: 'George Orwell' },
+            { id: 'OL468431W', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald' },
+            { id: 'OL102749W', title: 'Moby-Dick', author: 'Herman Melville' },
+            { id: 'OL267171W', title: 'War and Peace', author: 'Leo Tolstoy' },
+            { id: 'OL24574391W', title: 'Crime and Punishment', author: 'Fyodor Dostoevsky' },
+            { id: 'OL26446888W', title: 'The Odyssey', author: 'Homer' },
+            { id: 'OL3335245W', title: 'The Catcher in the Rye', author: 'J.D. Salinger' },
+            { id: 'OL8193416W', title: 'The Picture of Dorian Gray', author: 'Oscar Wilde' },
+            { id: 'OL503666W', title: 'Don Quijote', author: 'Miguel de Cervantes Saavedra' }
         ],
         'mystery-&-thriller': [
-            { id: 'OL262758W', title: 'The Da Vinci Code', author: 'Dan Brown' },
-            { id: 'OL2662457W', title: 'Gone Girl', author: 'Gillian Flynn' },
-            { id: 'OL262224W', title: 'The Girl with the Dragon Tattoo', author: 'Stieg Larsson' },
-            { id: 'OL24712W', title: 'Murder on the Orient Express', author: 'Agatha Christie' },
-            { id: 'OL24203W', title: 'The Hound of the Baskervilles', author: 'Arthur Conan Doyle' },
-            { id: 'OL1169138W', title: 'The Silence of the Lambs', author: 'Thomas Harris' },
-            { id: 'OL22914367W', title: 'The Woman in the Window', author: 'A.J. Finn' },
-            { id: 'OL20204278W', title: 'Big Little Lies', author: 'Liane Moriarty' },
-            { id: 'OL20663270W', title: 'The Guest List', author: 'Lucy Foley' },
-            { id: 'OL386030W', title: 'Rebecca', author: 'Daphne du Maurier' }
+            { id: 'OL76837W', title: 'The Da Vinci Code', author: 'Dan Brown' },
+            { id: 'OL16239762W', title: 'Gone Girl', author: 'Gillian Flynn' },
+            { id: 'OL24433230W', title: 'The Girl with the Dragon Tattoo', author: 'Stieg Larsson' },
+            { id: 'OL471576W', title: 'Murder on the Orient Express', author: 'Agatha Christie' },
+            { id: 'OL262454W', title: 'The Hound of the Baskervilles', author: 'Arthur Conan Doyle' },
+            { id: 'OL23481W', title: 'The Silence of the Lambs', author: 'Thomas Harris' },
+            { id: 'OL18147682W', title: 'The Woman in the Window', author: 'A.J. Finn' },
+            { id: 'OL17116911W', title: 'Big Little Lies', author: 'Liane Moriarty' },
+            { id: 'OL20742637W', title: 'The Guest List', author: 'Lucy Foley' },
+            { id: 'OL36633W', title: 'Rebecca', author: 'Daphne du Maurier' }
         ],
         'historical-fiction': [
-            { id: 'OL5735363W', title: 'The Book Thief', author: 'Markus Zusak' },
-            { id: 'OL45804W', title: 'All the Light We Cannot See', author: 'Anthony Doerr' },
-            { id: 'OL1397746W', title: 'The Pillars of the Earth', author: 'Ken Follett' },
-            { id: 'OL53919W', title: 'The Nightingale', author: 'Kristin Hannah' },
-            { id: 'OL66554W', title: 'Wolf Hall', author: 'Hilary Mantel' },
-            { id: 'OL26320742W', title: 'The Alice Network', author: 'Kate Quinn' },
-            { id: 'OL1531025W', title: 'The Other Boleyn Girl', author: 'Philippa Gregory' },
-            { id: 'OL7353617W', title: 'The Help', author: 'Kathryn Stockett' },
-            { id: 'OL262224W', title: 'Memoirs of a Geisha', author: 'Arthur Golden' },
-            { id: 'OL16803403W', title: 'The Tattooist of Auschwitz', author: 'Heather Morris' }
+            { id: 'OL5819456W', title: 'The Book Thief', author: 'Markus Zusak' },
+            { id: 'OL16821606W', title: 'All the Light We Cannot See', author: 'Anthony Doerr' },
+            { id: 'OL1914022W', title: 'The Pillars of the Earth', author: 'Ken Follett' },
+            { id: 'OL17116910W', title: 'The Nightingale', author: 'Kristin Hannah' },
+            { id: 'OL464512W', title: 'Wolf Hall', author: 'Hilary Mantel' },
+            { id: 'OL20060313W', title: 'The Alice Network', author: 'Kate Quinn' },
+            { id: 'OL59953W', title: 'The Other Boleyn Girl', author: 'Philippa Gregory' },
+            { id: 'OL11999891W', title: 'The Help', author: 'Kathryn Stockett' },
+            { id: 'OL1856675W', title: 'Memoirs of a Geisha', author: 'Arthur Golden' },
+            { id: 'OL19661009W', title: 'The Tattooist of Auschwitz', author: 'Heather Morris' }
         ]
     };
 
