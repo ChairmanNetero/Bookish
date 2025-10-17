@@ -1,0 +1,114 @@
+import React from 'react';
+import { BookOpen } from 'lucide-react';
+
+const MastersOfLiterature = () => {
+    const authors = [
+        {
+            name: "William Shakespeare",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/800px-Shakespeare.jpg",
+            era: "1564-1616"
+        },
+        {
+            name: "Jane Austen",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/CassandraAusten-JaneAusten%28c.1810%29_hires.jpg/800px-CassandraAusten-JaneAusten%28c.1810%29_hires.jpg",
+            era: "1775-1817"
+        },
+        {
+            name: "Charles Dickens",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Dickens_Gurney_head.jpg/800px-Dickens_Gurney_head.jpg",
+            era: "1812-1870"
+        },
+        {
+            name: "Mary Shelley",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/RothwellMaryShelley.jpg/800px-RothwellMaryShelley.jpg",
+            era: "1797-1851"
+        },
+        {
+            name: "Leo Tolstoy",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/L.N.Tolstoy_Prokudin-Gorsky.jpg/800px-L.N.Tolstoy_Prokudin-Gorsky.jpg",
+            era: "1828-1910"
+        },
+        {
+            name: "J.K. Rowling",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/J._K._Rowling_2010.jpg/800px-J._K._Rowling_2010.jpg",
+            era: "1965-Present"
+        },
+        {
+            name: "Stephen King",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Stephen_King%2C_Comicon.jpg/800px-Stephen_King%2C_Comicon.jpg",
+            era: "1947-Present"
+        },
+        {
+            name: "Margaret Atwood",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Margaret_Atwood_Eden_Mills_Writers_Festival_2006.jpg/800px-Margaret_Atwood_Eden_Mills_Writers_Festival_2006.jpg",
+            era: "1939-Present"
+        },
+        {
+            name: "Haruki Murakami",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Haruki_Murakami_2018_%28cropped%29.jpg/800px-Haruki_Murakami_2018_%28cropped%29.jpg",
+            era: "1949-Present"
+        },
+        {
+            name: "Chimamanda Ngozi Adichie",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Chimamanda_Ngozi_Adichie_2018.jpg/800px-Chimamanda_Ngozi_Adichie_2018.jpg",
+            era: "1977-Present"
+        }
+    ];
+
+    return (
+        <div className="w-full py-12 bg-gradient-to-b from-white to-gray-50">
+            <div className="container mx-auto px-4">
+                {/* Section Header */}
+                <div className="text-center mb-12">
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                        <BookOpen className="w-8 h-8 text-blue-600" />
+                        <h2 className="text-4xl font-bold text-gray-900">Masters of Literature</h2>
+                    </div>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Celebrating the literary giants whose words have shaped our world and continue to inspire generations of readers
+                    </p>
+                </div>
+
+                {/* Authors Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    {authors.map((author, index) => (
+                        <div
+                            key={index}
+                            className="group cursor-pointer"
+                        >
+                            <div className="relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-2">
+                                {/* Author Image */}
+                                <div className="aspect-square overflow-hidden bg-gray-200">
+                                    <img
+                                        src={author.image}
+                                        alt={author.name}
+                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        onError={(e) => {
+                                            e.target.src = 'https://via.placeholder.com/400x400?text=' + encodeURIComponent(author.name);
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Overlay with author info */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                                    <div className="p-4 w-full">
+                                        <p className="text-white text-sm font-semibold">{author.name}</p>
+                                        <p className="text-gray-300 text-xs">{author.era}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Author Name (visible by default on mobile) */}
+                            <div className="mt-3 text-center md:hidden">
+                                <p className="font-semibold text-gray-900 text-sm">{author.name}</p>
+                                <p className="text-gray-600 text-xs">{author.era}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MastersOfLiterature;

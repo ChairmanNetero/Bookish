@@ -1,6 +1,7 @@
 import React from 'react';
 import BookOfTheWeek from "../components/BookOfTheWeek.jsx";
 import TrendingNow from "../components/TrendingNow.jsx";
+import MastersOfLiterature from "../components/MastersOfLiterature.jsx";
 import {useDocumentTitle} from "../hooks/useDocumentTitle.js";
 
 const Home = () => {
@@ -26,6 +27,11 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Masters of Literature Section */}
+            <div className="mt-12">
+                <MastersOfLiterature />
             </div>
         </div>
     );
