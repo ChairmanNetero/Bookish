@@ -9,6 +9,7 @@ import Profile from "./pages/Profile.jsx";
 import MyBooks from "./pages/MyBooks.jsx";
 import Discover from "./pages/Discover.jsx";
 import GenreBooks from "./components/discover/GenreBooks.jsx";
+import AuthorWorks from "./pages/AuthorsWorks.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import './index.css'
@@ -60,6 +61,12 @@ const App = () => {
                 <Route path="/discover/:genre" element={<ProtectedRoute>
                     <Layout>
                         <GenreBooks/>
+                    </Layout>
+                </ProtectedRoute>}
+                />
+                <Route path="/author/:authorId" element={<ProtectedRoute>
+                    <Layout>
+                        <AuthorWorks/>
                     </Layout>
                 </ProtectedRoute>}
                 />
