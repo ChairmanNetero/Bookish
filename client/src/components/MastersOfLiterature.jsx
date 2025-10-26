@@ -50,26 +50,26 @@ const MastersOfLiterature = () => {
         },
         {
             name: "Margaret Atwood",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Margaret_Atwood_Eden_Mills_Writers_Festival_2006.jpg/800px-Margaret_Atwood_Eden_Mills_Writers_Festival_2006.jpg",
+            image: "https://upload.wikimedia.org/wikipedia/commons/7/75/Margaret_Atwood_2015.jpg",
             era: "1939-Present",
             olid: "OL16442A"
         },
         {
             name: "Haruki Murakami",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Haruki_Murakami_2018_%28cropped%29.jpg/800px-Haruki_Murakami_2018_%28cropped%29.jpg",
+            image: "https://upload.wikimedia.org/wikipedia/commons/7/71/HarukiMurakami_%28cropped%29.png",
             era: "1949-Present",
             olid: "OL34184A"
         },
         {
             name: "Chimamanda Ngozi Adichie",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Chimamanda_Ngozi_Adichie_2018.jpg/800px-Chimamanda_Ngozi_Adichie_2018.jpg",
+            image: "https://upload.wikimedia.org/wikipedia/commons/8/84/Chimamanda_Ngozi_Adichie_9374.JPG",
             era: "1977-Present",
             olid: "OL1394244A"
         }
     ];
 
     const handleAuthorClick = (author) => {
-        navigate(`/home/author/${author.olid}`, {
+        navigate(`/author/${author.olid}`, {
             state: {
                 authorName: author.name,
                 authorEra: author.era,
