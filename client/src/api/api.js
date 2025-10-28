@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance for your backend API
 export const backendAPI = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: import.meta.env.BASE_URL,
     timeout: 10000,
 });
 

@@ -1,4 +1,3 @@
-// components/BookOfTheWeek.jsx (Refactored)
 import React, { useState, useEffect } from 'react';
 import { useBookData } from '../hooks/useBookData';
 import { getWeekNumber } from '../utils/bookDescriptionGenerator';
