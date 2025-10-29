@@ -4,6 +4,7 @@ import axios from 'axios';
 import LibraryImg from '../assets/Library.jpg';
 
 const SignUp = () => {
+    console.log(import.meta.env.VITE_BASE_URL)
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
@@ -45,7 +46,7 @@ const SignUp = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/api/signup', {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/signup`, {
                 email: formData.email,
                 password: formData.password,
             });
