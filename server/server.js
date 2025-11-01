@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000
 
 // CORS configuration object
 const corsOptions = {
-    origins: ['http://localhost:5173', 'https://bookish7.netlify.app'],
+    origin: ['http://localhost:5173', 'https://bookish7.netlify.app'],
     optionsSuccessStatus: 200
 }
 
