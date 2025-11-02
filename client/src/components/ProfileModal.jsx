@@ -144,15 +144,10 @@ const ProfileModal = ({ isOpen, onClose, userData, onUpdateSuccess }) => {
                             </h3>
                             <div className="space-y-3">
                                 {/* Email (Read-only) */}
-                                <div className="space-y-3">
-                                    {isOwnProfile && (
-                                        <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                                            <span className="text-gray-600 font-medium">Email:</span>
-                                            <span className="text-gray-800">{userData.email}</span>
-                                        </div>
-                                    )}
-
-                                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <span className="text-gray-600 font-medium">Email:</span>
+                                    <span className="text-gray-800">{userData?.email}</span>
+                                </div>
 
                                 {/* First Name */}
                                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
