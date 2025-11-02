@@ -50,7 +50,6 @@ router.get('/users/:userId', async (req, res) => {
             where: { id: userIdInt },
             select: {
                 id: true,
-                email: true,
                 firstName: true,
                 lastName: true,
                 gender: true,
