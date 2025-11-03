@@ -59,7 +59,7 @@ const Profile = () => {
                 gender: user.gender || '',
                 country: user.country || '',
                 bio: user.bio || '',
-                email: user.email || '',
+                email: user.email || null,
                 profileImage: user.profileImage || null
             });
         } catch (error) {
