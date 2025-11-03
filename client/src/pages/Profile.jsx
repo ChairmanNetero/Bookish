@@ -163,10 +163,13 @@ const Profile = () => {
                             Personal Information
                         </h3>
                         <div className="space-y-3">
-                            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span className="text-gray-600 font-medium">Email:</span>
-                                <span className="text-gray-800">{userData.email}</span>
-                            </div>
+                            {/* Only show email if it exists (own profile only) */}
+                            {userData.email && (
+                                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                                    <span className="text-gray-600 font-medium">Email:</span>
+                                    <span className="text-gray-800">{userData.email}</span>
+                                </div>
+                            )}
 
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-gray-600 font-medium">First Name:</span>
