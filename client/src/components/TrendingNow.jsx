@@ -13,8 +13,8 @@ const BookCard = ({ book, onViewDetails }) => {
     const authorText = formatAuthors(book.author_name);
 
     return (
-        <div className="flex-shrink-0 w-80 bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
-            <div className="p-6">
+        <div className="flex-shrink-0 w-80 bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full">
+            <div className="p-6 h-full flex flex-col">
                 {/* Book Cover - Much Larger */}
                 <div className="flex justify-center mb-4">
                     <BookCover
@@ -24,8 +24,8 @@ const BookCard = ({ book, onViewDetails }) => {
                     />
                 </div>
 
-                {/* Book Info */}
-                <div className="text-center mb-4">
+                {/* Book Info - flex-grow to push button to bottom */}
+                <div className="text-center mb-4 flex-grow">
                     <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 line-clamp-2">
                         {book.title}
                     </h3>
@@ -44,7 +44,7 @@ const BookCard = ({ book, onViewDetails }) => {
                     />
                 </div>
 
-                {/* Action Button */}
+                {/* Action Button - stays at bottom */}
                 <button
                     onClick={() => onViewDetails(book)}
                     className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
