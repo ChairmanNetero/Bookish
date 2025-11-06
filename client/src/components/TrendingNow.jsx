@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBookData } from '../hooks/useBookData';
 import { formatAuthors, getCoverImageUrl } from '../utils/bookDescriptionGenerator';
 import BookCover from './BookCover';
@@ -7,7 +8,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ErrorDisplay from './ErrorDisplay';
 
 // Enhanced BookCard component
-const BookCard = ({ book }) => {
+const BookCard = ({ book, onViewDetails }) => {
     const coverURL = getCoverImageUrl(book.cover_i);
     const authorText = formatAuthors(book.author_name);
 
@@ -44,7 +45,9 @@ const BookCard = ({ book }) => {
                 </div>
 
                 {/* Action Button */}
-                <button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <button
+                    onClick={() => onViewDetails(book)}
+                    className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     View Details
                 </button>
             </div>
@@ -56,6 +59,7 @@ const BookCard = ({ book }) => {
 const TrendingNow = () => {
     const [books, setBooks] = useState([]);
     const { loading, error, fetchTrendingBooks } = useBookData();
+    const navigate = useNavigate();
 
     const loadTrendingBooks = async () => {
         try {
@@ -63,6 +67,22 @@ const TrendingNow = () => {
             setBooks(trendingBooks);
         } catch (err) {
             // Error is already handled in the hook
+        }
+    };
+
+    const handleViewDetails = (book) => {
+        // Extract book ID from the key (e.g., "/works/OL45804W" -> "OL45804W")
+        const bookId = book.key ? book.key.split('/').pop() : null;
+
+        if (bookId) {
+            // Navigate to book details page with the book ID
+            navigate(`/books/${bookId}`, {
+                state: {
+                    bookData: book
+                }
+            });
+        } else {
+            console.error('No valid book ID found');
         }
     };
 
@@ -104,7 +124,11 @@ const TrendingNow = () => {
                         <div className="flex-1">
                             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-gray-100 hover:scrollbar-thumb-indigo-400 h-full">
                                 {books.map((book, index) => (
-                                    <BookCard key={book.key || index} book={book} />
+                                    <BookCard
+                                        key={book.key || index}
+                                        book={book}
+                                        onViewDetails={handleViewDetails}
+                                    />
                                 ))}
                             </div>
                         </div>
