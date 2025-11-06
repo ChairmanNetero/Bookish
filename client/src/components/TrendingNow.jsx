@@ -39,7 +39,7 @@ const BookCard = ({ book }) => {
 
                     <StarRating
                         label="Trending"
-                        className="flex justify-center items-center mb-3"
+                        className="flex justify-center items-center"
                     />
                 </div>
 
