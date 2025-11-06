@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBookData } from '../hooks/useBookData';
-import { generateBookDescription, formatAuthors, getCoverImageUrl } from '../utils/bookDescriptionGenerator';
+import { formatAuthors, getCoverImageUrl } from '../utils/bookDescriptionGenerator';
 import BookCover from './BookCover';
 import StarRating from './StarRating';
 import LoadingSpinner from './LoadingSpinner';
@@ -9,7 +9,6 @@ import ErrorDisplay from './ErrorDisplay';
 // Enhanced BookCard component
 const BookCard = ({ book }) => {
     const coverURL = getCoverImageUrl(book.cover_i);
-    const description = generateBookDescription(book);
     const authorText = formatAuthors(book.author_name);
 
     return (
@@ -42,13 +41,6 @@ const BookCard = ({ book }) => {
                         label="Trending"
                         className="flex justify-center items-center mb-3"
                     />
-                </div>
-
-                {/* Description */}
-                <div className="border-t border-gray-100 pt-4 mb-4">
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-4 text-center">
-                        {description}
-                    </p>
                 </div>
 
                 {/* Action Button */}
