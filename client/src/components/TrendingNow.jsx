@@ -26,7 +26,7 @@ const BookCard = ({ book, onViewDetails }) => {
 
                 {/* Book Info - flex-grow to push button to bottom */}
                 <div className="text-center mb-4 flex-grow">
-                    <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 line-clamp-2">
+                    <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 line-clamp-2 h-14">
                         {book.title}
                     </h3>
                     <p className="text-indigo-600 font-medium text-sm mb-2">
