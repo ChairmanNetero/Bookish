@@ -11,21 +11,43 @@ export const externalAPI = axios.create({
     timeout: 25000,
 });
 
+// Add retry logic for timeout errors (especially for first request after cold start)
+backendAPI.interceptors.response.use(
+    response => response,
+    async error => {
+        const config = error.config;
+
+        // Retry on timeout if this is the first attempt
+        if (error.code === 'ECONNABORTED' && !config._retry) {
+            config._retry = true;
+            config.timeout = 30000; // Increase timeout to 30 seconds for retry
+
+            try {
+                return await backendAPI(config);
+            } catch (retryError) {
+                return Promise.reject(retryError);
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 // Function to set the auth token for backend requests
 export const setAuthToken = (token) => {
     if (token) {
         backendAPI.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        localStorage.setItem('authToken', token); // Store token in localStorage
+        localStorage.setItem('authToken', token);
     } else {
         delete backendAPI.defaults.headers.common['Authorization'];
-        localStorage.removeItem('authToken'); // Remove token from localStorage
+        localStorage.removeItem('authToken');
     }
 };
 
 // Function to remove auth token
 export const removeAuthToken = () => {
     delete backendAPI.defaults.headers.common['Authorization'];
-    localStorage.removeItem('authToken'); // Remove token from localStorage
+    localStorage.removeItem('authToken');
 };
 
 // Function to load token from localStorage on app start
